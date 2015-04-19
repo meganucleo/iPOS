@@ -10,6 +10,22 @@ DEBUG=1
 END_USER=vdirectas
 END_USER_PASS=vdirectas
 
+MYSQL_ROOT=jittermysql
+MYSQL_DB=VDSEMILLA
+MYSQL_USR=sistemas
+MYSQL_PASS=123qweobp
+MYSQL_INIT_DB=VDSEMILLA.sql
+MYSQL_TMP=/tmp/iPOS_db.sql.tmp
+MS1=s/\{MYSQL_DB\}/${MYSQL_DB}/g
+MS2=s/\{MYSQL_USR\}/${MYSQL_USR}/g
+MS3=s/\{MYSQL_PASS\}/${MYSQL_PASS}/g
+
+POS_TMP=/tmp/iPOS_properties.tmp
+POS_PROPERTIES=openbravo.properties
+POS1=s/\{MYSQL_DB\}/${MYSQL_DB}/g
+POS2=s/\{MYSQL_USR\}/${MYSQL_USR}/g
+
+
 INST_PATH=/opt/DPOS
 POS_BIN=openbravopos_2.30_bin.zip
 POS_LANG=openbravopos_2.20_es.zip
@@ -32,9 +48,28 @@ function checkRoot {
   fi
 }
 
+function warning {
+  key=1
+  while [[ $key =~ ^[^YNn]$  ]] ; do 
+    echo
+    echo "This script will install OpenBravo POS 2.30"
+    echo "on an Ubuntu 14.04TLS 32bit system"
+    echo
+    echo "WARNING!!! - All previous Data for POS will be erased"
+    echo
+    read -p "Are you sure you want to continue? (Y/n) " -n 1 -r
+    echo
+    key=$REPLY
+  done
+  if [ "$key" != "Y" ] ; then
+    pdebug "Exiting..."
+    exit 0
+  fi
+}
+
 function update {
   $APT update -y
-  $APT install vim openssh-server aptitude git -y
+  $APT install vim openssh-server aptitude git libmysql-java mysql-server -y
 }
 
 function addUser {
@@ -64,10 +99,36 @@ function install {
   /usr/bin/unzip ${POS_LANG} -d ${INST_PATH}
 }
 
+function setupMysql {
+   pdebug "Setting initial data to seed file: ${MYSQL_INIT_DB}"
+   /bin/sed "${MS1}" ${MYSQL_INIT_DB} > ${MYSQL_TMP}.1
+   /bin/sed "${MS2}" ${MYSQL_TMP}.1 > ${MYSQL_TMP}.2
+   /bin/sed "${MS3}" ${MYSQL_TMP}.2 > ${MYSQL_TMP}.3
+   
+   pdebug "Creating initial DB: ${MYSQL_DB}"
+   /usr/bin/mysql -u root --password=${MYSQL_ROOT} < ${MYSQL_TMP}.3 
+ 
+   pdebug "Erasing temporal files"
+   rm -f ${MYSQL_TMP}.1 ${MYSQL_TMP}.2 ${MYSQL_TMP}.3
+
+   pdebug "Setting initial data to ${POS_PROPERTIES}"
+   /bin/sed "${POS1}" ${POS_PROPERTIES} > ${POS_TMP}.1
+   /bin/sed "${POS2}" ${POS_TMP}.1 > ${POS_TMP}.2
+
+   pdebug "Copying ${POS_PROPERTIES} to /home/${END_USER}"
+   cp ${POS_TMP}.2 /home/${END_USER}/${POS_PROPERTIES}
+   chown ${END_USER}.${END_USER} /home/${END_USER}/${POS_PROPERTIES}
+
+   pdebug "Erasing temporal files"
+   rm -f ${POS_TMP}.1 ${POST_TMP}.2
+}
+
 #LOGIC
 checkRoot
-#update
+warning
+update
 addUser
-install
+#install
+setupMysql
 
 exit 0
