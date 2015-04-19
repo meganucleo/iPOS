@@ -21,7 +21,7 @@ MS2=s/\{MYSQL_USR\}/${MYSQL_USR}/g
 MS3=s/\{MYSQL_PASS\}/${MYSQL_PASS}/g
 
 POS_TMP=/tmp/iPOS_properties.tmp
-POS_PROPERTIES=openbravo.properties
+POS_PROPERTIES=openbravopos.properties
 POS1=s/\{MYSQL_DB\}/${MYSQL_DB}/g
 POS2=s/\{MYSQL_USR\}/${MYSQL_USR}/g
 
@@ -69,7 +69,7 @@ function warning {
 
 function update {
   $APT update -y
-  $APT install vim openssh-server aptitude git libmysql-java mysql-server -y
+  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre -y
 }
 
 function addUser {
@@ -85,18 +85,22 @@ function addUser {
 }
 
 function install {
-  if [ ! -d "${INST_PATH}" ] ; then
-    pdebug "Creating installation directory ${INST_PATH}"
-    /bin/mkdir -p ${INST_PATH}
-  else 
-    perror "Installation directory ${INST_PATH} exists, aborting."
+  if [ -d "${INST_PATH}" ] ; then
+    pdebug "Installation directory ${INST_PATH} exists, erasing."
+    rm -Rf ${INST_PATH}
   fi
+  pdebug "Creating installation directory ${INST_PATH}"
+  /bin/mkdir -p ${INST_PATH}
 
   pdebug "Decompresing ${POS_BIN} to ${INST_PATH}..."
   /usr/bin/unzip ${POS_BIN} -d ${INST_PATH}
   
   pdebug "Decompresing ${POS_LANG} to ${INST_PATH}..."
   /usr/bin/unzip ${POS_LANG} -d ${INST_PATH}
+
+  pdebug "Changing permissions."
+  chmod 755 ${INST_PATH}/start.sh
+
 }
 
 function setupMysql {
@@ -128,7 +132,7 @@ checkRoot
 warning
 update
 addUser
-#install
+install
 setupMysql
 
 exit 0
