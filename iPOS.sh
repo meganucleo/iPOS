@@ -19,12 +19,13 @@ MYSQL_TMP=/tmp/iPOS_db.sql.tmp
 MS1=s/\{MYSQL_DB\}/${MYSQL_DB}/g
 MS2=s/\{MYSQL_USR\}/${MYSQL_USR}/g
 MS3=s/\{MYSQL_PASS\}/${MYSQL_PASS}/g
+POS_USR=SEMILLA
+MS4=s/\{POS_USR\}/${POS_USR}/g
 
 POS_TMP=/tmp/iPOS_properties.tmp
 POS_PROPERTIES=openbravopos.properties
 POS1=s/\{MYSQL_DB\}/${MYSQL_DB}/g
 POS2=s/\{MYSQL_USR\}/${MYSQL_USR}/g
-
 
 INST_PATH=/opt/DPOS
 POS_BIN=openbravopos_2.30_bin.zip
@@ -69,7 +70,7 @@ function warning {
 
 function update {
   $APT update -y
-  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre -y
+  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib -y
 }
 
 function addUser {
@@ -108,12 +109,13 @@ function setupMysql {
    /bin/sed "${MS1}" ${MYSQL_INIT_DB} > ${MYSQL_TMP}.1
    /bin/sed "${MS2}" ${MYSQL_TMP}.1 > ${MYSQL_TMP}.2
    /bin/sed "${MS3}" ${MYSQL_TMP}.2 > ${MYSQL_TMP}.3
+   /bin/sed "${MS4}" ${MYSQL_TMP}.3 > ${MYSQL_TMP}.4
    
    pdebug "Creating initial DB: ${MYSQL_DB}"
-   /usr/bin/mysql -u root --password=${MYSQL_ROOT} < ${MYSQL_TMP}.3 
+   /usr/bin/mysql -u root --password=${MYSQL_ROOT} < ${MYSQL_TMP}.4
  
    pdebug "Erasing temporal files"
-   rm -f ${MYSQL_TMP}.1 ${MYSQL_TMP}.2 ${MYSQL_TMP}.3
+   rm -f ${MYSQL_TMP}.1 ${MYSQL_TMP}.2 ${MYSQL_TMP}.3 ${MYSQL_TMP}.4
 
    pdebug "Setting initial data to ${POS_PROPERTIES}"
    /bin/sed "${POS1}" ${POS_PROPERTIES} > ${POS_TMP}.1

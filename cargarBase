@@ -1,6 +1,7 @@
 #!/usr/bin/tclsh
 
 package require Tk
+package require csv
 
 #Window and container properties
 wm title . "Configurador de punto de Venta"
@@ -152,4 +153,8 @@ proc check {} {
       break
     }
   }
+}
+
+proc parseCSV {} {
+    
 }
