@@ -8,6 +8,10 @@ wm title . "Configurador de punto de Venta"
 grid [ttk::frame .container -padding "30"] -column 0 -row 0 -sticky nswe
 grid columnconfigure . 0 -weight 1; grid rowconfigure . 0 -weight 1
 
+#Result
+#Creating the window
+tk::toplevel .results
+
 #Creating labels
 ttk::label .container.instructions  \
   -text "Este programa carga una base de datos nueva en éste punto de venta.\n
@@ -158,8 +162,6 @@ proc check {} {
 }
 
 proc process {} {
-  #Creating the window
-  tk::toplevel .results
   grid [ttk::frame .results.f -padding "30 20 30 20"] -column 0 -row 0
   wm title .results "Resultados de carga"
   #Creating elements
