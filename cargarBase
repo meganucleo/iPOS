@@ -178,7 +178,7 @@ proc process {} {
 }
 
 proc writeLog {msg} {
-  .results.f.textarea configure -state enabled 
+  .results.f.textarea configure -state normal 
   .results.f.textarea insert end "$msg\n"
   .results.f.textarea configure -state disabled
 }
