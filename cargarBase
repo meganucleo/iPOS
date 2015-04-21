@@ -195,7 +195,7 @@ proc parseCSV {} {
   while {[gets $fh line] != -1} {
     set csv($num) [csv::split $line]
     lassign $csv($num) lnum isbn code descr idy price group taxcat
-    writelog "No: $lnum, ISBN: $isbn, Code: $code, ID: $idy, $$price, Tax: $taxcat"
+    writeLog "No: $lnum, ISBN: $isbn, Code: $code, ID: $idy, $$price, Tax: $taxcat"
     incr num
   }
   close $fh 
