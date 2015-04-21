@@ -164,7 +164,7 @@ proc process {} {
   wm title .results "Resultados de carga"
   #Creating elements
   ttk::label .results.f.l_result -text "Resultados de carga"
-  tk::text .results.f.textarea -state disabled	-width 100 -height 24
+  tk::text .results.f.textarea -state disabled	-width 100 -height 24 -wrap word
   ttk::button .results.f.b_ok -text "Terminar" -command exit_prog
   #Placing elements
   grid .results.f.l_result -column 0 -row 0
@@ -183,7 +183,7 @@ proc parseCSV {} {
   set num 0 
 
   while {[gets $fh line] != -1} {
-    puts "linea $num"
+    .results.f.textarea insert end "linea $num"
     set csv($num) [csv::split $line]
     foreach val $csv($num) {
       puts "$val|"
