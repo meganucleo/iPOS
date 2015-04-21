@@ -62,6 +62,7 @@ set db_name ""
 set pos_usr ""
 set pos_pass ""
 set disccount "Deshabilitado"
+array set csv {}
 
 #Disable file entry
 .container.e_db_file state disabled
@@ -153,8 +154,41 @@ proc check {} {
       break
     }
   }
+  process
+}
+
+proc process {} {
+  #Creating the window
+  tk::toplevel .results
+  grid [ttk::frame .results.f -padding "30 20 30 20"] -column 0 -row 0
+  wm title .results "Resultados de carga"
+  #Creating elements
+  ttk::label .results.f.l_result -text "Resultados de carga"
+  tk::text .results.f.textarea -state disabled	-width 80 -height 24
+  ttk::button .results.f.b_ok -text "Terminar" -command exit_prog
+  #Placing elements
+  grid .results.f.l_result -column 0 -row 0
+  grid .results.f.textarea -column 0 -row 1
+  grid .results.f.b_ok -column 0 -row 2 -sticky e
+  #set padding to all elements
+  foreach w [winfo children .results] {grid configure $w -padx 5 -pady 5}
+  focus .results.f.b_ok
+  parseCSV
 }
 
 proc parseCSV {} {
-    
+  global filename
+  global csv
+  set fh [open $filename]
+  set num 0 
+
+  while {[gets $fh line] != -1} {
+    puts "linea $num"
+    set csv($num) [csv::split $line]
+    foreach val $csv($num) {
+      puts "$val|"
+    }
+    incr num
+  }
+  close $fh 
 }
