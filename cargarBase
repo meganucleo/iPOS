@@ -1,0 +1,155 @@
+#!/usr/bin/tclsh
+
+package require Tk
+
+#Window and container properties
+wm title . "Configurador de punto de Venta"
+grid [ttk::frame .container -padding "30"] -column 0 -row 0 -sticky nswe
+grid columnconfigure . 0 -weight 1; grid rowconfigure . 0 -weight 1
+
+#Creating labels
+ttk::label .container.instructions  \
+  -text "Este programa carga una base de datos nueva en éste punto de venta.\n
+Es necesario:\n
+1) Base de datos en formato CSV.\n
+2) Haber respaldado información de ventas anteriores."
+ttk::label .container.l_db_file -text "Archivo a cargar:"
+ttk::label .container.l_db_name -text "Nombre de la base (campaña):"
+ttk::label .container.l_pos_usr -text "Usuario del POS:"
+ttk::label .container.l_pos_pass -text "Clave en el ticket:"
+ttk::label .container.l_pos_dsct -text "Botón de descuento:"
+ttk::label .container.l_pos_tckt -text "Tickets a imprimir:"
+ttk::label .container.l_pos_dsct2 -textvariable disccount 
+
+#Creating entries and buttons
+ttk::entry .container.e_db_file -width 15 -textvariable filename
+ttk::button .container.b_db_file -text "Buscar" -command findFile
+ttk::entry .container.e_db_name -width 25 -textvariable db_name 
+.container.e_db_name configure -validate key -validatecommand  {validName %P}
+ttk::entry .container.e_pos_usr -width 25 -textvariable pos_usr
+.container.e_pos_usr configure -validate key -validatecommand  {validName %P}
+ttk::entry .container.e_pos_pass -width 25 -textvariable pos_pass
+.container.e_pos_pass configure -validate key -validatecommand  {validName %P}
+ttk::checkbutton .container.c_pos_dsct -variable disccount \
+  -onvalue Habilitado -offvalue Deshabilitado
+ttk::combobox .container.co_pos_tckt -width 15 -textvariable tickets 
+ttk::button .container.b_load_db -text "Cargar Base" -command confirm
+
+#Distributing elements
+#labels
+grid .container.instructions -column 0 -row 0 -columnspan 3
+grid .container.l_db_file -column 0 -row 1 -sticky e
+grid .container.l_db_name -column 0 -row 2 -sticky e
+grid .container.l_pos_usr -column 0 -row 3 -sticky e
+grid .container.l_pos_pass -column 0 -row 4 -sticky e
+grid .container.l_pos_dsct -column 0 -row 5 -sticky e
+grid .container.l_pos_tckt -column 0 -row 6 -sticky e
+grid .container.l_pos_dsct2 -column 2 -row 5 -sticky w
+#entries and buttons
+grid .container.e_db_file -column 1 -row 1 -sticky w 
+grid .container.b_db_file -column 2 -row 1 -sticky e 
+grid .container.e_db_name -column 1 -row 2 -sticky w -columnspan 2
+grid .container.e_pos_usr -column 1 -row 3 -sticky w -columnspan 2
+grid .container.e_pos_pass -column 1 -row 4 -sticky w -columnspan 2
+grid .container.c_pos_dsct -column 1 -row 5 -sticky w 
+grid .container.co_pos_tckt -column 1 -row 6 -sticky w -columnspan 2
+grid .container.b_load_db -column 1 -row 7 -columnspan 2
+
+#set initial values
+set filename ""
+set db_name ""
+set pos_usr ""
+set pos_pass ""
+set disccount "Deshabilitado"
+
+#Disable file entry
+.container.e_db_file state disabled
+
+#Set ticket printing number options
+set tickets 2
+.container.co_pos_tckt configure -values [list 2 3] 
+.container.co_pos_tckt state readonly
+
+#set padding to all elements
+foreach w [winfo children .container] {grid configure $w -padx 5 -pady 5}
+focus .container.b_db_file
+
+proc validName {P} {
+  if {[regexp {[^a-zA-Z0-9_]} $P test]} {
+    tk_messageBox -title "Advertencia" \
+       -message "Utilice sólo letras, números y guiones bajos.\n(No permitidos: ñ,acentos y espacios)" \
+       -icon warning
+    set result 0
+  } else {
+    set result 1
+  }
+  return $result
+}
+
+proc findFile {} {
+  global pos_usr
+  global db_name
+  global filename 
+  set type {
+    {{Archivo CSV} {.csv .CSV} }
+  }
+  set filename [tk_getOpenFile -filetypes $type]
+  if {$filename ne ""} {
+    regexp {([a-zA-Z0-9_]+).(csv|CSV)$} $filename all first
+    if {$first ne ""} {
+      set db_name $first
+      set pos_usr $first
+    }
+  }
+}
+
+proc confirm {} {
+  #Creating the window
+  tk::toplevel .confirm 
+  grid [ttk::frame .confirm.f -padding "30 20 30 20"] -column 0 -row 0
+  wm title .confirm "Confirme por favor" 
+  #Creating the label
+  ttk::label .confirm.f.l_warn -text "¡Los datos existentes se borrarán!"
+  #Creating the buttons
+  ttk::button .confirm.f.b_cancel -text "Cancelar" -command cancel
+  ttk::button .confirm.f.b_ok -text "Aceptar" -command check
+  #Place the labels
+  grid .confirm.f.l_warn -column 0 -row 0 -columnspan 2
+  #Place buttons
+  grid .confirm.f.b_cancel -column 0 -row 1 
+  grid .confirm.f.b_ok -column 1 -row 1
+  #Set window padding
+  foreach w [winfo children .confirm.f] {grid configure $w -padx 5 -pady 5}
+  #Set window logic
+  focus .confirm.f.b_ok
+  bind . <Return> {check}
+}
+
+proc cancel {} {
+  destroy .confirm
+}
+
+proc check {} {
+  destroy .confirm
+  global filename
+  global db_name
+  global pos_usr
+  global pos_pass
+  set data [list "filename" "db_name" "pos_usr" "pos_pass"]
+  set ilabel [list "Archivo no seleccionado" "Nombre de base de datos vacío" "Nombre de usuario vacío" "Falta clave de ticket"]
+  set num 0
+  set result "ok"
+
+  foreach field $data {
+    if {[set $field] eq ""} {
+      tk_messageBox -title "Error" \
+       -message [lindex $ilabel $num] \
+       -icon error
+      set result "error"
+    }
+    incr num
+    if {$result eq "error"} {
+      break
+    }
+  }
+}
