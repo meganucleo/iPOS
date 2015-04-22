@@ -102,8 +102,8 @@ proc findFile {} {
       set db_name $first
       set pos_usr $first
     }
+    checkCSV
   }
-  checkCSV
 }
 
 proc confirm {} {
@@ -188,47 +188,49 @@ proc parseCSV {} {
   global filename
   global csv
   global .results
-  set fh [open $filename]
-  set num 1 
-  set ok 0
-  set errorTxt ""
-
-  while {[gets $fh line] != -1} {
-    set csv($num) [csv::split $line]
-    lassign $csv($num) lnum isbn code descr idy price group taxcat
-    #writeLog "No: $lnum, ISBN: $isbn, Code: $code, ID: $idy, $$price, Tax: $taxcat"
-    if {! [string is digit $lnum]} {
-      append errorTxt "Número de línea '$lnum' no es un dígito. "
-      incr ok
-    }
-    if {! [regexp {^[0-9]{13}?$} $isbn]} {
-      append errorTxt "ISBN '$isbn' debe tener 13 dígitos. "
-      incr ok
-    }
-    if {! [regexp {^[0-9]{13}?$} $code]} {
-      append errorTxt "El código '$code' debe tener 13 dígitos. "
-      incr ok
-    }
-    if {! [regexp {^[0-9a-zA-Z ]{1,65}$} $descr]} {
-      append errorTxt "Descripción menor a 65 caracteres, sólo alfanuméricos. "
-      incr ok
-    }
-    if {$idy != 0} {
-      append errorTxt "ID '$idy' debe de ser 0. "
-      incr ok
-    }
-    if {! [regexp {[0-9]+\.*[0-9]{0,2}} $price]} {
-      append errorTxt "Precio '$price' mal formado. "
-      incr ok
-    }
-    if { $ok > 0 } {
-      writeLog "Línea $num: $errorTxt"
-    }
-    incr num
+  if { $filename ne "" } {
+    set fh [open $filename]
+    set num 1 
     set ok 0
     set errorTxt ""
+
+    while {[gets $fh line] != -1} {
+      set csv($num) [csv::split $line]
+      lassign $csv($num) lnum isbn code descr idy price group taxcat
+      #writeLog "No: $lnum, ISBN: $isbn, Code: $code, ID: $idy, $$price, Tax: $taxcat"
+      if {! [string is digit $lnum]} {
+        append errorTxt "Número de línea '$lnum' no es un dígito. "
+        incr ok
+      }
+      if {! [regexp {^[0-9]{13}?$} $isbn]} {
+        append errorTxt "ISBN '$isbn' debe tener 13 dígitos. "
+        incr ok
+      }
+      if {! [regexp {^[0-9]{13}?$} $code]} {
+        append errorTxt "El código '$code' debe tener 13 dígitos. "
+        incr ok
+      }
+      if {! [regexp {^[0-9a-zA-Z ]{1,65}$} $descr]} {
+        append errorTxt "Descripción menor a 65 caracteres, sólo alfanuméricos. "
+        incr ok
+      }
+      if {$idy != 0} {
+        append errorTxt "ID '$idy' debe de ser 0. "
+        incr ok
+      }
+      if {! [regexp {[0-9]+\.*[0-9]{0,2}} $price]} {
+        append errorTxt "Precio '$price' mal formado. "
+        incr ok
+      }
+      if { $ok > 0 } {
+        writeLog "Línea $num: $errorTxt"
+      }
+      incr num
+      set ok 0
+      set errorTxt ""
+    }
+    close $fh 
   }
-  close $fh 
 }
 
 proc closeCSV {} {
