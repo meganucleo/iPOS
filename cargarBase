@@ -103,6 +103,7 @@ proc findFile {} {
       set pos_usr $first
     }
   }
+  checkCSV
 }
 
 proc confirm {} {
@@ -114,7 +115,7 @@ proc confirm {} {
   ttk::label .confirm.f.l_warn -text "¡Los datos existentes se borrarán!"
   #Creating the buttons
   ttk::button .confirm.f.b_cancel -text "Cancelar" -command cancel
-  ttk::button .confirm.f.b_ok -text "Aceptar" -command check
+  ttk::button .confirm.f.b_ok -text "Aceptar" -command process
   #Place the labels
   grid .confirm.f.l_warn -column 0 -row 0 -columnspan 2
   #Place buttons
@@ -124,14 +125,14 @@ proc confirm {} {
   foreach w [winfo children .confirm.f] {grid configure $w -padx 5 -pady 5}
   #Set window logic
   focus .confirm.f.b_ok
-  bind . <Return> {check}
+  bind . <Return> {process}
 }
 
 proc cancel {} {
   destroy .confirm
 }
 
-proc check {} {
+proc process {} {
   destroy .confirm
   global filename
   global db_name
@@ -154,11 +155,9 @@ proc check {} {
       break
     }
   }
-  process
 }
 
-proc process {} {
-  global .results
+proc checkCSV {} {
   #Creating the window
   tk::toplevel .results
   grid [ttk::frame .results.f -padding "30 20 30 20"] -column 0 -row 0
@@ -167,7 +166,7 @@ proc process {} {
   ttk::label .results.f.l_result -text "Resultados de carga"
   tk::text .results.f.textarea -state disabled -width 100 -height 24 -wrap word -yscrollcommand ".results.f.s_text set"
   ttk::scrollbar .results.f.s_text -command ".results.f.textarea yview" -orient vertical
-  ttk::button .results.f.b_ok -text "Terminar" -command exit_prog
+  ttk::button .results.f.b_ok -text "Cerrar" -command closeCSV
   #Placing elements
   grid .results.f.l_result -column 0 -row 0 -columnspan 2
   grid .results.f.textarea -column 0 -row 1 -sticky nswe
@@ -232,6 +231,6 @@ proc parseCSV {} {
   close $fh 
 }
 
-proc exit_prog {} {
-  exit 0
+proc closeCSV {} {
+  destroy .results
 }
