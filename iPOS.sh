@@ -25,6 +25,8 @@ POS_TMP=/tmp/iPOS_properties.tmp
 POS_PROPERTIES=openbravopos.properties
 POS="-e 's/\{MYSQL_DB\}/${MYSQL_DB}/g' -e 's/\{MYSQL_USR\}/${MYSQL_USR}/g' -e 's/\{MYSQL_PASS\}/${MYSQL_PASS_C}"
 
+RD="-e 's/\{MYSQL_DB\}/${MYSQL_DB}/g' -e 's/\{MYSQL_USR\}/${MYSQL_USR}/g' -e 's/\{MYSQL_PASS\}/${MYSQL_PASS}"
+
 INST_PATH=/opt/DPOS
 POS_BIN=openbravopos_2.30_bin.zip
 POS_LANG=openbravopos_2.20_es.zip
@@ -100,6 +102,23 @@ function install {
   pdebug "Changing permissions."
   chmod 755 ${INST_PATH}/start.sh
 
+  pdebug "Installing shortcuts"
+  [ -d "/home/${END_USER}/Escritorio" ] && /bin/cp -f shortcuts/POS.desktop /home/${END_USER}/Escritorio 
+  [ -d "/home/${END_USER}/Desktop" ] && /bin/cp -f shortcuts/POS.desktop /home/${END_USER}/Desktop 
+
+  pdebug "Installing ReporteDiario.py"
+  pdebug "Setting initial data to py script"
+  /bin/sed "${RD}" ReporteDiario.py > ReporteDiario.py.1
+  
+  pdebug "Installing py script"
+  /bin/cp -f ReporteDiario.py.1 /bin/ReporteDiario.py
+  
+  pdebug "Erasing temporal file"
+  rm -f ReporteDiario.py.1
+
+  pdebug "Setting permissions to py script"
+  chmod 755 /bin/ReporteDiario.py
+
 }
 
 function setupMysql {
@@ -116,12 +135,13 @@ function setupMysql {
    /bin/sed "${POS}" ${POS_PROPERTIES} > ${POS_TMP}.1
 
    pdebug "Copying ${POS_PROPERTIES} to /home/${END_USER}"
-   cp ${POS_TMP}.1 /home/${END_USER}/${POS_PROPERTIES}
+   /bin/cp ${POS_TMP}.1 /home/${END_USER}/${POS_PROPERTIES}
    chown ${END_USER}.${END_USER} /home/${END_USER}/${POS_PROPERTIES}
 
    pdebug "Erasing temporal files"
    rm -f ${POS_TMP}.1 
 }
+
 
 #LOGIC
 checkRoot

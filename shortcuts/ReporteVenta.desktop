@@ -1,0 +1,14 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Icon[es_MX]=/
+Name[es_MX]=ReporteVenta
+Exec=/bin/ReporteDiaro.py
+Comment[es_MX]=Generador de Reportes automatico
+Name=ReporteVenta
+Comment=Generador de Reportes automatico
+Icon=/usr/share/icons/gnome/scalable/emblems/emblem-documents.svg
+
