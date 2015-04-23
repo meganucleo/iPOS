@@ -3,6 +3,16 @@
 package require Tk
 package require csv
 
+#set initial values
+set filename ""
+set db_name ""
+set db_usr "sistemas"
+set db_pass "123qweobp"
+set pos_usr ""
+set pos_pass ""
+set disccount "Deshabilitado"
+array set csv {}
+
 #Window and container properties
 wm title . "Configurador de punto de Venta"
 grid [ttk::frame .container -padding "30"] -column 0 -row 0 -sticky nswe
@@ -55,14 +65,6 @@ grid .container.e_pos_pass -column 1 -row 4 -sticky w -columnspan 2
 grid .container.c_pos_dsct -column 1 -row 5 -sticky w 
 grid .container.co_pos_tckt -column 1 -row 6 -sticky w -columnspan 2
 grid .container.b_load_db -column 1 -row 7 -columnspan 2
-
-#set initial values
-set filename ""
-set db_name ""
-set pos_usr ""
-set pos_pass ""
-set disccount "Deshabilitado"
-array set csv {}
 
 #Disable file entry
 .container.e_db_file state disabled
@@ -134,6 +136,7 @@ proc cancel {} {
 
 proc process {} {
   destroy .confirm
+  processWindow
   global filename
   global db_name
   global pos_usr
@@ -155,15 +158,23 @@ proc process {} {
       break
     }
   }
+  
+  writeLog2 "file: $filename"
+  writeLog2 "db_name: $db_name"
+  writeLog2 "pos_usr: $pos_usr"
+  writeLog2 "pos_pass: $pos_pass"
+ 
+  prepareDBSeed
+
 }
 
 proc checkCSV {} {
   #Creating the window
   tk::toplevel .results
   grid [ttk::frame .results.f -padding "30 20 30 20"] -column 0 -row 0
-  wm title .results "Resultados de carga"
+  wm title .results "Revisión de archivo"
   #Creating elements
-  ttk::label .results.f.l_result -text "Resultados de carga"
+  ttk::label .results.f.l_result -text "Resultados de revisión de archivo CSV"
   tk::text .results.f.textarea -state disabled -width 100 -height 24 -wrap word -yscrollcommand ".results.f.s_text set"
   ttk::scrollbar .results.f.s_text -command ".results.f.textarea yview" -orient vertical
   ttk::button .results.f.b_ok -text "Cerrar" -command closeCSV
@@ -177,11 +188,36 @@ proc checkCSV {} {
   focus .results.f.b_ok
   parseCSV
 }
+proc processWindow {} {
+  #Creating the window
+  tk::toplevel .r2
+  grid [ttk::frame .r2.f -padding "30 20 30 20"] -column 0 -row 0
+  wm title .r2 "Resultados del proceso"
+  #Creating elements
+  ttk::label .r2.f.l_result -text "Resultados de la carga de base de datos nueva"
+  tk::text .r2.f.textarea -state disabled -width 100 -height 24 -wrap word -yscrollcommand ".r2.f.s_text set"
+  ttk::scrollbar .r2.f.s_text -command ".r2.f.textarea yview" -orient vertical
+  ttk::button .r2.f.b_ok -text "Cerrar" -command closeProcessWindow
+  #Placing elements
+  grid .r2.f.l_result -column 0 -row 0 -columnspan 2
+  grid .r2.f.textarea -column 0 -row 1 -sticky nswe
+  grid .r2.f.s_text -column 1 -row 1 -sticky nsw
+  grid .r2.f.b_ok -column 0 -row 2 -sticky e -columnspan 2
+  #set padding to all elements
+  foreach w [winfo children .r2.f] {grid configure $w -padx 5 -pady 5}
+  focus .r2.f.b_ok
+}
 
 proc writeLog {msg} {
   .results.f.textarea configure -state normal 
   .results.f.textarea insert end "$msg\n"
   .results.f.textarea configure -state disabled
+}
+
+proc writeLog2 {msg} {
+  .r2.f.textarea configure -state normal 
+  .r2.f.textarea insert end "$msg\n"
+  .r2.f.textarea configure -state disabled
 }
 
 proc parseCSV {} {
@@ -191,7 +227,8 @@ proc parseCSV {} {
   if { $filename ne "" } {
     set fh [open $filename]
     set num 1 
-    set ok 0
+    set line_err 0
+    set err 0
     set errorTxt ""
 
     while {[gets $fh line] != -1} {
@@ -200,39 +237,54 @@ proc parseCSV {} {
       #writeLog "No: $lnum, ISBN: $isbn, Code: $code, ID: $idy, $$price, Tax: $taxcat"
       if {! [string is digit $lnum]} {
         append errorTxt "Número de línea '$lnum' no es un dígito. "
-        incr ok
+        incr line_err
       }
       if {! [regexp {^[0-9]{13}?$} $isbn]} {
         append errorTxt "ISBN '$isbn' debe tener 13 dígitos. "
-        incr ok
+        incr line_err
       }
       if {! [regexp {^[0-9]{13}?$} $code]} {
         append errorTxt "El código '$code' debe tener 13 dígitos. "
-        incr ok
+        incr line_err
       }
       if {! [regexp {^[0-9a-zA-Z ]{1,65}$} $descr]} {
         append errorTxt "Descripción menor a 65 caracteres, sólo alfanuméricos. "
-        incr ok
+        incr line_err
       }
       if {$idy != 0} {
         append errorTxt "ID '$idy' debe de ser 0. "
-        incr ok
+        incr line_err
       }
       if {! [regexp {[0-9]+\.*[0-9]{0,2}} $price]} {
         append errorTxt "Precio '$price' mal formado. "
-        incr ok
+        incr line_err
       }
-      if { $ok > 0 } {
+      if { $line_err > 0 } {
         writeLog "Línea $num: $errorTxt"
+        incr err
       }
       incr num
-      set ok 0
+      set line_err 0
       set errorTxt ""
     }
     close $fh 
+  }
+  if { $err > 0 } {
+    writeLog "======================\nATENCIÓN: $err líneas con error, verifique."
+  } else {
+    writeLog "======================\nCSV Correcto!"
   }
 }
 
 proc closeCSV {} {
   destroy .results
+}
+
+proc closeProcessWindow {} {
+  destroy .r2
+}
+
+proc prepareDBSeed {} {
+  global db_name
+  
 }
