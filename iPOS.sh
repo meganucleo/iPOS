@@ -20,7 +20,9 @@ MS1=s/\{MYSQL_DB\}/${MYSQL_DB}/g
 MS2=s/\{MYSQL_USR\}/${MYSQL_USR}/g
 MS3=s/\{MYSQL_PASS\}/${MYSQL_PASS}/g
 POS_USR=SEMILLA
+POS_PASS=SEMILLA
 MS4=s/\{POS_USR\}/${POS_USR}/g
+MS5=s/\{POS_PASS\}/${POS_PASS}/g
 
 POS_TMP=/tmp/iPOS_properties.tmp
 POS_PROPERTIES=openbravopos.properties
@@ -110,12 +112,13 @@ function setupMysql {
    /bin/sed "${MS2}" ${MYSQL_TMP}.1 > ${MYSQL_TMP}.2
    /bin/sed "${MS3}" ${MYSQL_TMP}.2 > ${MYSQL_TMP}.3
    /bin/sed "${MS4}" ${MYSQL_TMP}.3 > ${MYSQL_TMP}.4
+   /bin/sed "${MS5}" ${MYSQL_TMP}.4 > ${MYSQL_TMP}.5
    
    pdebug "Creating initial DB: ${MYSQL_DB}"
-   /usr/bin/mysql -u root --password=${MYSQL_ROOT} < ${MYSQL_TMP}.4
+   /usr/bin/mysql -u root --password=${MYSQL_ROOT} < ${MYSQL_TMP}.5
  
    pdebug "Erasing temporal files"
-   rm -f ${MYSQL_TMP}.1 ${MYSQL_TMP}.2 ${MYSQL_TMP}.3 ${MYSQL_TMP}.4
+   rm -f ${MYSQL_TMP}.1 ${MYSQL_TMP}.2 ${MYSQL_TMP}.3 ${MYSQL_TMP}.4 ${MYSQL_TMP}.5
 
    pdebug "Setting initial data to ${POS_PROPERTIES}"
    /bin/sed "${POS1}" ${POS_PROPERTIES} > ${POS_TMP}.1
