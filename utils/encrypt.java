@@ -1,4 +1,6 @@
-import utils.*;
+package utils;
+
+import utils.pos.*;
 
 public class encrypt {
   public static void main (String[] args) {
@@ -10,5 +12,6 @@ public class encrypt {
     AltEncrypter cypher = new AltEncrypter("cypherkey" + args[0]);
     dbPass = cypher.encrypt(args[1]);
     System.out.println(dbPass);
+    System.exit(0);
   }
 }

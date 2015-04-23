@@ -16,18 +16,14 @@ MYSQL_USR=sistemas
 MYSQL_PASS=123qweobp
 MYSQL_INIT_DB=VDSEMILLA.sql
 MYSQL_TMP=/tmp/iPOS_db.sql.tmp
-MS1=s/\{MYSQL_DB\}/${MYSQL_DB}/g
-MS2=s/\{MYSQL_USR\}/${MYSQL_USR}/g
-MS3=s/\{MYSQL_PASS\}/${MYSQL_PASS}/g
+MS="-e 's/\{MYSQL_DB\}/${MYSQL_DB}/g' -e 's/\{MYSQL_USR\}/${MYSQL_USR}/g' -e 's/\{MYSQL_PASS\}/${MYSQL_PASS}/g' -e 's/\{POS_USR\}/${POS_USR}/g' -e 's/\{POS_PASS\}/${POS_PASS}/g'"
 POS_USR=SEMILLA
 POS_PASS=SEMILLA
-MS4=s/\{POS_USR\}/${POS_USR}/g
-MS5=s/\{POS_PASS\}/${POS_PASS}/g
+MYSQL_PASS_C=$(java utils/encrypt ${MYSQL_USR} ${MYSQL_PASS})
 
 POS_TMP=/tmp/iPOS_properties.tmp
 POS_PROPERTIES=openbravopos.properties
-POS1=s/\{MYSQL_DB\}/${MYSQL_DB}/g
-POS2=s/\{MYSQL_USR\}/${MYSQL_USR}/g
+POS="-e 's/\{MYSQL_DB\}/${MYSQL_DB}/g' -e 's/\{MYSQL_USR\}/${MYSQL_USR}/g' -e 's/\{MYSQL_PASS\}/${MYSQL_PASS_C}"
 
 INST_PATH=/opt/DPOS
 POS_BIN=openbravopos_2.30_bin.zip
@@ -108,28 +104,23 @@ function install {
 
 function setupMysql {
    pdebug "Setting initial data to seed file: ${MYSQL_INIT_DB}"
-   /bin/sed "${MS1}" ${MYSQL_INIT_DB} > ${MYSQL_TMP}.1
-   /bin/sed "${MS2}" ${MYSQL_TMP}.1 > ${MYSQL_TMP}.2
-   /bin/sed "${MS3}" ${MYSQL_TMP}.2 > ${MYSQL_TMP}.3
-   /bin/sed "${MS4}" ${MYSQL_TMP}.3 > ${MYSQL_TMP}.4
-   /bin/sed "${MS5}" ${MYSQL_TMP}.4 > ${MYSQL_TMP}.5
+   /bin/sed "${MS}" ${MYSQL_INIT_DB} > ${MYSQL_TMP}.1
    
    pdebug "Creating initial DB: ${MYSQL_DB}"
-   /usr/bin/mysql -u root --password=${MYSQL_ROOT} < ${MYSQL_TMP}.5
+   /usr/bin/mysql -u root --password=${MYSQL_ROOT} < ${MYSQL_TMP}.1
  
    pdebug "Erasing temporal files"
-   rm -f ${MYSQL_TMP}.1 ${MYSQL_TMP}.2 ${MYSQL_TMP}.3 ${MYSQL_TMP}.4 ${MYSQL_TMP}.5
+   rm -f ${MYSQL_TMP}.1 
 
    pdebug "Setting initial data to ${POS_PROPERTIES}"
-   /bin/sed "${POS1}" ${POS_PROPERTIES} > ${POS_TMP}.1
-   /bin/sed "${POS2}" ${POS_TMP}.1 > ${POS_TMP}.2
+   /bin/sed "${POS}" ${POS_PROPERTIES} > ${POS_TMP}.1
 
    pdebug "Copying ${POS_PROPERTIES} to /home/${END_USER}"
-   cp ${POS_TMP}.2 /home/${END_USER}/${POS_PROPERTIES}
+   cp ${POS_TMP}.1 /home/${END_USER}/${POS_PROPERTIES}
    chown ${END_USER}.${END_USER} /home/${END_USER}/${POS_PROPERTIES}
 
    pdebug "Erasing temporal files"
-   rm -f ${POS_TMP}.1 ${POST_TMP}.2
+   rm -f ${POS_TMP}.1 
 }
 
 #LOGIC

@@ -9,7 +9,16 @@ package require mysqltcl
 
 #set initial values
 set filename ""
-set sys_usr "vdirectas"
+set rc [catch {exec -- /usr/bin/whoami} sys_usr]
+if { $rc != "0" } {
+  errorMsg $sys_usr   
+}
+proc getScriptDir {} {
+  set scriptFile [file normalize [info script]]
+  set Path [file dirname $scriptFile]
+  return $Path
+}
+set wd [getScriptDir]
 set db_h ""
 set db_root "jittermysql"
 set db_name ""
@@ -307,8 +316,10 @@ proc prepareDBSeed {} {
   global pos_usr
   global pos_pass
   global db_root
+  global sys_usr
+  global wd
   writeLog2 "Preparando semilla de base de datos"
-  set rc [catch {exec -- sed -e "s/{MYSQL_DB}/$db_name/g" -e "s/{MYSQL_USR}/$db_usr/g" -e "s/{MYSQL_PASS}/$db_pass/g" -e "s/{POS_USR}/$pos_usr/g" -e "s/{POS_PASS}/$pos_pass/g" VDSEMILLA.sql > /home/$sys_usr/$db_name.sql } msg ]
+  set rc [catch {exec -- sed -e "s/{MYSQL_DB}/$db_name/g" -e "s/{MYSQL_USR}/$db_usr/g" -e "s/{MYSQL_PASS}/$db_pass/g" -e "s/{POS_USR}/$pos_usr/g" -e "s/{POS_PASS}/$pos_pass/g" $wd/VDSEMILLA.sql > /home/$sys_usr/$db_name.sql } msg ]
   if { $rc != "0" } {
     errorMsg $msg   
   }
@@ -356,10 +367,11 @@ proc loadProducts {} {
 
 proc buttonDisccount {} {
   global disccount
+  global wd
   if { $disccount == "Habilitado" } {
     writeLog2 "Habilitando botón de descuento"
     #Reading Ticket.Buttons to memory
-    set fp [open "resources/Ticket.Buttons.disccount" r]
+    set fp [open "$wd/resources/Ticket.Buttons.disccount" r]
     fconfigure $fp -encoding utf-8
     set file_data [read $fp]
     close $fp
@@ -372,11 +384,12 @@ proc changeTicket {} {
   global pos_usr
   global pos_pass
   global tickets
+  global wd
   writeLog2 "Tickets a imprimir $tickets"
   if { $tickets == 3 } {
     writeLog2 "Cambiando tickets a 3"
     #Reading Printer.Ticket.3 to memory
-    set fp [open "resources/Printer.Ticket.3" r]
+    set fp [open "$wd/resources/Printer.Ticket.3" r]
     fconfigure $fp -encoding utf-8
     set file_data [read $fp]
     close $fp
@@ -391,7 +404,17 @@ proc changeTicket {} {
 proc changeProperties {} {
    global db_usr
    global db_name
+   global db_pass
+   global sys_usr
+   global wd
+   set db_pass_c ""
    writeLog2 "Arreglando openbravopos.properties"
+   writeLog2 "Codificando clave"
+   set rc [catch { exec -- $wd/utils/encrypt.sh $wd $db_usr $db_pass } msg]
+   if { $rc != "0" } {
+     errorMsg $msg 
+   }
+   set db_pass_c $msg
    #Reading openbravopos.properties to memory
    set fp [open "openbravopos.properties" r]
    fconfigure $fp -encoding utf-8
@@ -400,6 +423,7 @@ proc changeProperties {} {
    #Replacing data
    regsub -all {{MYSQL_USR}} $file_data $db_usr file_data
    regsub -all {{MYSQL_DB}} $file_data $db_name file_data
+   regsub -all {{MYSQL_PASS}} $file_data $db_pass_c file_data
    set filename "/home/$sys_usr/openbravopos.properties"
    set fp [open $filename "w"]
    puts $fp $file_data
