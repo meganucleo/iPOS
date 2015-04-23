@@ -192,7 +192,7 @@ proc process {} {
   changeTicket
   changeProperties
   writeLog2 "CARGA TERMINADA EXITOSAMENTE"
-  tk_messageBox -message "Base de datos de productos cargada correctamente" -icon notify -title "Base Cargada"
+  tk_messageBox -message "Base de datos de productos cargada correctamente" -icon info -title "Base Cargada"
 }
 
 proc checkCSV {} {
