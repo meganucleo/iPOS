@@ -419,7 +419,7 @@ proc changeProperties {} {
    }
    set db_pass_c $msg
    #Reading openbravopos.properties to memory
-   set fp [open "openbravopos.properties" r]
+   set fp [open "$wd/openbravopos.properties" r]
    fconfigure $fp -encoding utf-8
    set file_data [read $fp]
    close $fp
@@ -428,6 +428,7 @@ proc changeProperties {} {
    regsub -all {{MYSQL_DB}} $file_data $db_name file_data
    regsub -all {{MYSQL_PASS}} $file_data $db_pass_c file_data
    set filename "/home/$sys_usr/openbravopos.properties"
+   exec -- rm -f $filename
    set fp [open $filename "w"]
    puts $fp $file_data
    close $fp
