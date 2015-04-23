@@ -1,5 +1,3 @@
-Ticket.Buttons
-
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
     Openbravo POS is a point of sales application designed for touch screens.
@@ -23,8 +21,8 @@ Ticket.Buttons
  -->
 <configuration>
     <event key="ticket.close" code="Importe.Letra"/>
-    <button key="button.opendrawer" titlekey="button.opendrawer" template="Printer.OpenDrawer"/>
-    <button name="DescLinea %" code="Button.DiscountLine"/>
+    <button name="Descuento%" code="Button.DiscountLine"/>
+    <button key="button.print" titlekey="button.print" template="Printer.TicketPreview"/>
     <!-- <event key="ticket.change" code="event.change"/> -->
     <!-- <event key="ticket.addline" code="event.addline"/> -->
     <!-- <event key="ticket.removeline" code="event.removeline"/> -->

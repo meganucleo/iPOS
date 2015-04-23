@@ -1,10 +1,17 @@
 #!/usr/bin/tclsh
+#Leon Ramos 2015
+#SOPORTEYA.MX
+#@fulvous
 
 package require Tk
 package require csv
+package require mysqltcl
 
 #set initial values
 set filename ""
+set sys_usr "vdirectas"
+set db_h ""
+set db_root "jittermysql"
 set db_name ""
 set db_usr "sistemas"
 set db_pass "123qweobp"
@@ -77,6 +84,11 @@ set tickets 2
 #set padding to all elements
 foreach w [winfo children .container] {grid configure $w -padx 5 -pady 5}
 focus .container.b_db_file
+
+proc errorMsg {msg} {
+  tk_messageBox -message $msg -icon error -title "Error"
+  exit 1
+}
 
 proc validName {P} {
   if {[regexp {[^a-zA-Z0-9_]} $P test]} {
@@ -159,13 +171,17 @@ proc process {} {
     }
   }
   
-  writeLog2 "file: $filename"
-  writeLog2 "db_name: $db_name"
-  writeLog2 "pos_usr: $pos_usr"
-  writeLog2 "pos_pass: $pos_pass"
+  #writeLog2 "file: $filename"
+  #writeLog2 "db_name: $db_name"
+  #writeLog2 "pos_usr: $pos_usr"
+  #writeLog2 "pos_pass: $pos_pass"
  
+  writeLog2 "Comenzando el proceso de instalación de base de datos"
   prepareDBSeed
-
+  loadProducts
+  buttonDisccount
+  changeTicket
+  changeProperties
 }
 
 proc checkCSV {} {
@@ -290,7 +306,102 @@ proc prepareDBSeed {} {
   global db_pass
   global pos_usr
   global pos_pass
-  #exec -- cp VDSEMILLA.sql $db_name.sql
-  exec -- sed -e "s/{MYSQL_DB}/$db_name/g" -e "s/{MYSQL_USR}/$db_usr/g" -e "s/{MYSQL_PASS}/$db_pass/g" -e "s/{POS_USR}/$pos_usr/g" -e "s/{POS_PASS}/$pos_pass/g" VDSEMILLA.sql > $db_name.sql 
-  writeLog2 "Seed substitution made"
+  global db_root
+  writeLog2 "Preparando semilla de base de datos"
+  set rc [catch {exec -- sed -e "s/{MYSQL_DB}/$db_name/g" -e "s/{MYSQL_USR}/$db_usr/g" -e "s/{MYSQL_PASS}/$db_pass/g" -e "s/{POS_USR}/$pos_usr/g" -e "s/{POS_PASS}/$pos_pass/g" VDSEMILLA.sql > /home/$sys_usr/$db_name.sql } msg ]
+  if { $rc != "0" } {
+    errorMsg $msg   
+  }
+  writeLog2 "Cargando base de datos..."
+  set rc [catch { exec -- mysql -u root --password=$db_root < /home/$sys_usr/$db_name.sql} msg ]
+  if { $rc != "0" } {
+    errorMsg $msg
+  }
+  writeLog2 "Eliminando archivo temporal $db_name.sql"
+  set rc [ catch {exec -- rm /home/$sys_usr/$db_name.sql } msg ]
+  if { $rc != "0" } {
+    errorMsg $msg 
+  }
+  writeLog2 "OK -  Creación de base de datos lista"
+}
+
+proc connectDB {} {
+  global db_usr
+  global db_name
+  global db_pass
+  global db_h
+  set db_h [mysqlconnect -user $db_usr -db $db_name -password $db_pass]
+}
+
+proc execDB {sql} {
+  global db_h
+  return [::mysql::exec $db_h $sql]
+}
+
+proc loadProducts {} {
+  global csv
+  global db_h
+  writeLog2 "Cargando los productos a la base de datos"
+  connectDB
+  set num 1  
+
+  foreach {key line} [array get csv] {
+    lassign $line lnum isbn code descr idy price group taxcat
+    #puts "INSERT INTO PRODUCTS (ID,REFERENCE,CODE,NAME,PRICEBUY,PRICESELL,CATEGORY,TAXCAT) VALUES ($lnum,\"$isbn\",\"$code\",\"$descr\",\"$idy\",\"$price\",\"$group\",\"$taxcat\")"
+    execDB "INSERT INTO PRODUCTS (ID,REFERENCE,CODE,NAME,PRICEBUY,PRICESELL,CATEGORY,TAXCAT) VALUES ($lnum,\"$isbn\",\"$code\",\"$descr\",\"$idy\",\"$price\",\"$group\",\"$taxcat\")"
+    incr num
+  }
+  writeLog2 "Productos importados: $num"
+}
+
+proc buttonDisccount {} {
+  global disccount
+  if { $disccount == "Habilitado" } {
+    writeLog2 "Habilitando botón de descuento"
+    #Reading Ticket.Buttons to memory
+    set fp [open "resources/Ticket.Buttons.disccount" r]
+    fconfigure $fp -encoding utf-8
+    set file_data [read $fp]
+    close $fp
+    #Editing existing Ticket.Buttons resource
+    execDB "UPDATE RESOURCES SET CONTENT='$file_data' WHERE NAME='Ticket.Buttons'"
+  } 
+}
+
+proc changeTicket {} {
+  global pos_usr
+  global pos_pass
+  global tickets
+  writeLog2 "Tickets a imprimir $tickets"
+  if { $tickets == 3 } {
+    writeLog2 "Cambiando tickets a 3"
+    #Reading Printer.Ticket.3 to memory
+    set fp [open "resources/Printer.Ticket.3" r]
+    fconfigure $fp -encoding utf-8
+    set file_data [read $fp]
+    close $fp
+    #Replacing data
+    regsub -all {{POS_USR}} $file_data $pos_usr file_data
+    regsub -all {{POS_PASS}} $file_data $pos_pass file_data
+    #Editing existing Printer.Ticket
+    execDB "UPDATE RESOURCES SET CONTENT='$file_data' WHERE NAME='Printer.Ticket'"
+  }
+}
+
+proc changeProperties {} {
+   global db_usr
+   global db_name
+   writeLog2 "Arreglando openbravopos.properties"
+   #Reading openbravopos.properties to memory
+   set fp [open "openbravopos.properties" r]
+   fconfigure $fp -encoding utf-8
+   set file_data [read $fp]
+   close $fp
+   #Replacing data
+   regsub -all {{MYSQL_USR}} $file_data $db_usr file_data
+   regsub -all {{MYSQL_DB}} $file_data $db_name file_data
+   set filename "/home/$sys_usr/openbravopos.properties"
+   set fp [open $filename "w"]
+   puts $fp $file_data
+   close $fp
 }

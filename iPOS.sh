@@ -72,7 +72,7 @@ function warning {
 
 function update {
   $APT update -y
-  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib -y
+  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl -y
 }
 
 function addUser {
