@@ -4,4 +4,4 @@
 {POS_USR}
 
 exec -- cp VDSEMILLA.sql $db_name.sql
-exec -- sed -e "s/{MYSQL_DB}/$db_name/g" -e "s/{MYSQL_USR}/$db_usr/g" -e "s/{MYSQL_PASS}/$db_pass/g" -e "s/{POS_USR}/$pos_usr/g" $db_name.sql
+exec -- sed -e "s/{MYSQL_DB}/$db_name/g" -e "s/{MYSQL_USR}/$db_usr/g" -e "s/{MYSQL_PASS}/$db_pass/g" -e "s/{POS_USR}/$pos_usr/g" -e "s/{POS_PASS}/$pos_pass/g" $db_name.sql
