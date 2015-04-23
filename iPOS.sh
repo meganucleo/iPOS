@@ -16,20 +16,19 @@ MYSQL_USR=sistemas
 MYSQL_PASS=123qweobp
 MYSQL_INIT_DB=VDSEMILLA.sql
 MYSQL_TMP=/tmp/iPOS_db.sql.tmp
-MS="-e 's/\{MYSQL_DB\}/${MYSQL_DB}/g' -e 's/\{MYSQL_USR\}/${MYSQL_USR}/g' -e 's/\{MYSQL_PASS\}/${MYSQL_PASS}/g' -e 's/\{POS_USR\}/${POS_USR}/g' -e 's/\{POS_PASS\}/${POS_PASS}/g'"
 POS_USR=SEMILLA
 POS_PASS=SEMILLA
 MYSQL_PASS_C=$(java utils/encrypt ${MYSQL_USR} ${MYSQL_PASS})
 
 POS_TMP=/tmp/iPOS_properties.tmp
 POS_PROPERTIES=openbravopos.properties
-POS="-e 's/\{MYSQL_DB\}/${MYSQL_DB}/g' -e 's/\{MYSQL_USR\}/${MYSQL_USR}/g' -e 's/\{MYSQL_PASS\}/${MYSQL_PASS_C}"
-
-RD="-e 's/\{MYSQL_DB\}/${MYSQL_DB}/g' -e 's/\{MYSQL_USR\}/${MYSQL_USR}/g' -e 's/\{MYSQL_PASS\}/${MYSQL_PASS}"
 
 INST_PATH=/opt/DPOS
 POS_BIN=openbravopos_2.30_bin.zip
 POS_LANG=openbravopos_2.20_es.zip
+POS="s/{MYSQL_DB}/${MYSQL_DB}/g;s/{MYSQL_USR}/${MYSQL_USR}/g;s/{MYSQL_PASS}/${MYSQL_PASS_C}/g"
+RD="s/{MYSQL_DB}/$MYSQL_DB/g;s/{MYSQL_USR}/$MYSQL_USR/g;s/{MYSQL_PASS}/$MYSQL_PASS/g"
+MS="s/{MYSQL_DB}/${MYSQL_DB}/g;s/{MYSQL_USR}/${MYSQL_USR}/g;s/{MYSQL_PASS}/${MYSQL_PASS}/g;s/{POS_USR}/${POS_USR}/g;s/{POS_PASS}/${POS_PASS}/g"
 
 #FUNCTIONS
 function pdebug {
@@ -70,7 +69,7 @@ function warning {
 
 function update {
   $APT update -y
-  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl -y
+  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl python-mysqldb  -y
 }
 
 function addUser {
@@ -103,12 +102,17 @@ function install {
   chmod 755 ${INST_PATH}/start.sh
 
   pdebug "Installing shortcuts"
-  [ -d "/home/${END_USER}/Escritorio" ] && /bin/cp -f shortcuts/POS.desktop /home/${END_USER}/Escritorio 
+  [ ! -d "/home/${END_USER}/Escritorio" ] && mkdir -p /home/${END_USER}/Escritorio && chmod 755 /home/${END_USER}/Escritorio
+  /bin/cp -f shortcuts/POS.desktop /home/${END_USER}/Escritorio 
+  chmod 755 /home/${END_USER}/Escritorio/POS.desktop 
+  chown ${END_USER}.${END_USER} /home/${END_USER}/Escritorio/POS.desktop
+  # English support
   [ -d "/home/${END_USER}/Desktop" ] && /bin/cp -f shortcuts/POS.desktop /home/${END_USER}/Desktop 
+  [ -f "/home/${END_USER}/Desktop/POS.desktop" ] && chmod 755 /home/${END_USER}/Desktop/POS.desktop && chown ${END_USER}.${END_USER} /home/${END_USER}/Desktop/POS.desktop
 
   pdebug "Installing ReporteDiario.py"
   pdebug "Setting initial data to py script"
-  /bin/sed "${RD}" ReporteDiario.py > ReporteDiario.py.1
+  sed -e "$RD" ReporteDiario.py > ReporteDiario.py.1
   
   pdebug "Installing py script"
   /bin/cp -f ReporteDiario.py.1 /bin/ReporteDiario.py
@@ -118,12 +122,20 @@ function install {
 
   pdebug "Setting permissions to py script"
   chmod 755 /bin/ReporteDiario.py
+  
+  pdebug "Installing shortcuts"
+  /bin/cp -f shortcuts/ReporteVenta.desktop /home/${END_USER}/Escritorio
+  chmod 755 /home/${END_USER}/Escritorio/ReporteVenta.desktop 
+  chown ${END_USER}.${END_USER} /home/${END_USER}/Escritorio/ReporteVenta.desktop
+  # English support
+  [ -d "/home/${END_USER}/Desktop" ] && /bin/cp -f shortcuts/ReporteVenta.desktop /home/${END_USER}/Desktop 
+  [ -f "/home/${END_USER}/Desktop/POS.desktop" ] && chmod 755 /home/${END_USER}/Desktop/ReporteVenta.desktop && chown ${END_USER}.${END_USER} /home/${END_USER}/Desktop/ReporteVenta.desktop
 
 }
 
 function setupMysql {
    pdebug "Setting initial data to seed file: ${MYSQL_INIT_DB}"
-   /bin/sed "${MS}" ${MYSQL_INIT_DB} > ${MYSQL_TMP}.1
+   /bin/sed -e "${MS}" ${MYSQL_INIT_DB} > ${MYSQL_TMP}.1
    
    pdebug "Creating initial DB: ${MYSQL_DB}"
    /usr/bin/mysql -u root --password=${MYSQL_ROOT} < ${MYSQL_TMP}.1
@@ -132,7 +144,7 @@ function setupMysql {
    rm -f ${MYSQL_TMP}.1 
 
    pdebug "Setting initial data to ${POS_PROPERTIES}"
-   /bin/sed "${POS}" ${POS_PROPERTIES} > ${POS_TMP}.1
+   /bin/sed -e "${POS}" ${POS_PROPERTIES} > ${POS_TMP}.1
 
    pdebug "Copying ${POS_PROPERTIES} to /home/${END_USER}"
    /bin/cp ${POS_TMP}.1 /home/${END_USER}/${POS_PROPERTIES}
