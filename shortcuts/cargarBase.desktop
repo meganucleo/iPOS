@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Cargar Base
+Comment=Carga una base de productos nueva
+Exec=/opt/iPOS/cargarBase
+Icon=ooo-base
+Path=
+Terminal=false
+StartupNotify=false

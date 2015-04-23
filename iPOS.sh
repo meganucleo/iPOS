@@ -123,13 +123,21 @@ function install {
   pdebug "Setting permissions to py script"
   chmod 755 /bin/ReporteDiario.py
   
-  pdebug "Installing shortcuts"
+  pdebug "Installing shortcuts Reporte"
   /bin/cp -f shortcuts/ReporteVenta.desktop /home/${END_USER}/Escritorio
   chmod 755 /home/${END_USER}/Escritorio/ReporteVenta.desktop 
   chown ${END_USER}.${END_USER} /home/${END_USER}/Escritorio/ReporteVenta.desktop
   # English support
   [ -d "/home/${END_USER}/Desktop" ] && /bin/cp -f shortcuts/ReporteVenta.desktop /home/${END_USER}/Desktop 
   [ -f "/home/${END_USER}/Desktop/POS.desktop" ] && chmod 755 /home/${END_USER}/Desktop/ReporteVenta.desktop && chown ${END_USER}.${END_USER} /home/${END_USER}/Desktop/ReporteVenta.desktop
+  pdebug "Installing shortcuts Cargar Base"
+  /bin/cp -f shortcuts/cargarBase.desktop /home/${END_USER}/Escritorio
+  chmod 755 /home/${END_USER}/Escritorio/cargarBase.desktop 
+  chown ${END_USER}.${END_USER} /home/${END_USER}/Escritorio/cargarBase.desktop
+  # English support
+  [ -d "/home/${END_USER}/Desktop" ] && /bin/cp -f shortcuts/cargarBase.desktop /home/${END_USER}/Desktop 
+  [ -f "/home/${END_USER}/Desktop/POS.desktop" ] && chmod 755 /home/${END_USER}/Desktop/cargarBase.desktop && chown ${END_USER}.${END_USER} /home/${END_USER}/Desktop/cargarBase.desktop
+
 
 }
 

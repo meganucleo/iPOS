@@ -191,6 +191,8 @@ proc process {} {
   buttonDisccount
   changeTicket
   changeProperties
+  writeLog2 "CARGA TERMINADA EXITOSAMENTE"
+  tk_messageBox -message "Base de datos de productos cargada correctamente" -icon notify -title "Base Cargada"
 }
 
 proc checkCSV {} {
@@ -222,7 +224,7 @@ proc processWindow {} {
   ttk::label .r2.f.l_result -text "Resultados de la carga de base de datos nueva"
   tk::text .r2.f.textarea -state disabled -width 100 -height 24 -wrap word -yscrollcommand ".r2.f.s_text set"
   ttk::scrollbar .r2.f.s_text -command ".r2.f.textarea yview" -orient vertical
-  ttk::button .r2.f.b_ok -text "Cerrar" -command closeProcessWindow
+  ttk::button .r2.f.b_ok -text "Terminar" -command closeProcessWindow
   #Placing elements
   grid .r2.f.l_result -column 0 -row 0 -columnspan 2
   grid .r2.f.textarea -column 0 -row 1 -sticky nswe
@@ -307,6 +309,7 @@ proc closeCSV {} {
 
 proc closeProcessWindow {} {
   destroy .r2
+  exit 0
 }
 
 proc prepareDBSeed {} {
