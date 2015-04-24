@@ -253,6 +253,7 @@ proc parseCSV {} {
   global .results
   if { $filename ne "" } {
     set fh [open $filename]
+    fconfigure $fh -encoding utf-8
     set num 1 
     set line_err 0
     set err 0
