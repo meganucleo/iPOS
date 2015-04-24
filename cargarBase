@@ -262,7 +262,7 @@ proc parseCSV {} {
     while {[gets $fh line] != -1} {
       set csv($num) [csv::split $line]
       lassign $csv($num) lnum isbn code descr idy price group taxcat
-      #writeLog "No: $lnum, ISBN: $isbn, Code: $code, ID: $idy, $$price, Tax: $taxcat"
+      #writeLog "No: $lnum, ISBN: $isbn, Code: $code, ID: $idy, $$price, Group: $group, Tax: $taxcat"
       if {! [string is digit $lnum]} {
         append errorTxt "Número de línea '$lnum' no es un dígito. "
         incr line_err
@@ -276,7 +276,7 @@ proc parseCSV {} {
         incr line_err
       }
       if {! [regexp {^[0-9a-zA-Z ]{1,80}$} $descr]} {
-        append errorTxt "Descripción menor a 65 caracteres, sólo alfanuméricos. "
+        append errorTxt "Descripción menor a 80 caracteres, sólo alfanuméricos. "
         incr line_err
       }
       if {$idy != 0} {
@@ -285,6 +285,14 @@ proc parseCSV {} {
       }
       if {! [regexp {[0-9]+\.*[0-9]{0,2}} $price]} {
         append errorTxt "Precio '$price' mal formado. "
+        incr line_err
+      }
+      if {! [regexp {[0-9]{1,3}} $group]} {
+        append errorTxt "Categoría mal formada: $group"
+        incr line_err
+      }
+      if {! [regexp {00[1|0]} $taxcat]} {
+        append errorTxt "Categoría de impuesto erronea: $taxcat"
         incr line_err
       }
       if { $line_err > 0 } {
