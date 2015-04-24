@@ -274,7 +274,7 @@ proc parseCSV {} {
         append errorTxt "El código '$code' debe tener 13 dígitos. "
         incr line_err
       }
-      if {! [regexp {^[0-9a-zA-Z ]{1,65}$} $descr]} {
+      if {! [regexp {^[0-9a-zA-Z ]{1,80}$} $descr]} {
         append errorTxt "Descripción menor a 65 caracteres, sólo alfanuméricos. "
         incr line_err
       }
