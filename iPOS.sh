@@ -95,7 +95,7 @@ function install {
 
   pdebug "Decompresing ${POS_BIN} to ${INST_PATH}..."
   #/usr/bin/unzip ${POS_BIN} -d ${INST_PATH}
-  /bin/tar -C ${INST_PATH} ${POS_BIN}
+  /bin/tar zxvf ${POS_BIN} -C ${INST_PATH} 
   
   #pdebug "Decompresing ${POS_LANG} to ${INST_PATH}..."
   #/usr/bin/unzip ${POS_LANG} -d ${INST_PATH}
