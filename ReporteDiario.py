@@ -13,10 +13,11 @@ import commands
 dbServer='127.0.0.1'
 dbPass='{MYSQL_PASS}'
 dbUser='{MYSQL_USR}'
-dbSchema='{MYSQL_DB}'
+config="openbravopos.properties"
 
 home=commands.getoutput("echo $HOME")
 
+dbSchema=commands.getoutput("egrep 'db\.URL' "+home+"/"+config+" | egrep -o '[a-zA-Z0-9\_]+$'")
 output=home+'/Escritorio/reporteDiario.csv'
 
 #dbQuery="select T0.TICKETID,  T1.LINE, T2.REFERENCE, T2.NAME, T1.UNITS, T1.PRICE, T1.UNITS * T1.PRICE AS TOTAL, DATE_FORMAT( T3.DATENEW, '%Y-%m-%d' ) , T4.RATE, T5.PAYMENT from TICKETS T0 INNER JOIN TICKETLINES T1 ON T0.ID = T1.TICKET INNER JOIN PRODUCTS T2 ON T1.PRODUCT = T2.ID INNER JOIN RECEIPTS T3 ON T1.TICKET = T3.ID INNER JOIN TAXES T4 ON T1.TAXID = T4.ID INNER JOIN PAYMENTS T5 ON T1.TICKET = T5.RECEIPT WHERE DATE( T3.DATENEW ) = CURDATE( ) ORDER BY TICKETID"

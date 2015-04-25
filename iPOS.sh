@@ -25,8 +25,8 @@ POS_PROPERTIES=openbravopos.properties
 
 INST_PATH=/opt/DPOS
 #POS_BIN=openbravopos_2.30_bin.zip
-POS_BIN=DeltiPOS-2.30.tar.gz
 #POS_LANG=openbravopos_2.20_es.zip
+POS_BIN=DeltiPOS-2.30.tar.gz
 POS="s/{MYSQL_DB}/${MYSQL_DB}/g;s/{MYSQL_USR}/${MYSQL_USR}/g;s/{MYSQL_PASS}/${MYSQL_PASS_C}/g"
 RD="s/{MYSQL_DB}/$MYSQL_DB/g;s/{MYSQL_USR}/$MYSQL_USR/g;s/{MYSQL_PASS}/$MYSQL_PASS/g"
 MS="s/{MYSQL_DB}/${MYSQL_DB}/g;s/{MYSQL_USR}/${MYSQL_USR}/g;s/{MYSQL_PASS}/${MYSQL_PASS}/g;s/{POS_USR}/${POS_USR}/g;s/{POS_PASS}/${POS_PASS}/g"
@@ -95,7 +95,7 @@ function install {
 
   pdebug "Decompresing ${POS_BIN} to ${INST_PATH}..."
   #/usr/bin/unzip ${POS_BIN} -d ${INST_PATH}
-  /bin/tar zxvf ${POS_BIN} -C ${INST_PATH} 
+  /bin/tar zxf ${POS_BIN} -C ${INST_PATH} 
   
   #pdebug "Decompresing ${POS_LANG} to ${INST_PATH}..."
   #/usr/bin/unzip ${POS_LANG} -d ${INST_PATH}

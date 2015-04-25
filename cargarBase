@@ -372,6 +372,7 @@ proc loadProducts {} {
     lassign $line lnum isbn code descr idy price group taxcat
     #puts "INSERT INTO PRODUCTS (ID,REFERENCE,CODE,NAME,PRICEBUY,PRICESELL,CATEGORY,TAXCAT) VALUES ($lnum,\"$isbn\",\"$code\",\"$descr\",\"$idy\",\"$price\",\"$group\",\"$taxcat\")"
     execDB "INSERT INTO PRODUCTS (ID,REFERENCE,CODE,NAME,PRICEBUY,PRICESELL,CATEGORY,TAXCAT) VALUES ($lnum,\"$isbn\",\"$code\",\"$descr\",\"$idy\",\"$price\",\"$group\",\"$taxcat\")"
+    execDB "INSERT INTO PRODUCTS_CAT (PRODUCT,CATORDER) VALUES ($lnum,NULL)"
     incr num
   }
   writeLog2 "Productos importados: $num"
