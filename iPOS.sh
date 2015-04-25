@@ -24,8 +24,9 @@ POS_TMP=/tmp/iPOS_properties.tmp
 POS_PROPERTIES=openbravopos.properties
 
 INST_PATH=/opt/DPOS
-POS_BIN=openbravopos_2.30_bin.zip
-POS_LANG=openbravopos_2.20_es.zip
+#POS_BIN=openbravopos_2.30_bin.zip
+POS_BIN=DeltiPOS-2.30.tar.gz
+#POS_LANG=openbravopos_2.20_es.zip
 POS="s/{MYSQL_DB}/${MYSQL_DB}/g;s/{MYSQL_USR}/${MYSQL_USR}/g;s/{MYSQL_PASS}/${MYSQL_PASS_C}/g"
 RD="s/{MYSQL_DB}/$MYSQL_DB/g;s/{MYSQL_USR}/$MYSQL_USR/g;s/{MYSQL_PASS}/$MYSQL_PASS/g"
 MS="s/{MYSQL_DB}/${MYSQL_DB}/g;s/{MYSQL_USR}/${MYSQL_USR}/g;s/{MYSQL_PASS}/${MYSQL_PASS}/g;s/{POS_USR}/${POS_USR}/g;s/{POS_PASS}/${POS_PASS}/g"
@@ -93,10 +94,11 @@ function install {
   /bin/mkdir -p ${INST_PATH}
 
   pdebug "Decompresing ${POS_BIN} to ${INST_PATH}..."
-  /usr/bin/unzip ${POS_BIN} -d ${INST_PATH}
+  #/usr/bin/unzip ${POS_BIN} -d ${INST_PATH}
+  /bin/tar -C ${INST_PATH} ${POS_BIN}
   
-  pdebug "Decompresing ${POS_LANG} to ${INST_PATH}..."
-  /usr/bin/unzip ${POS_LANG} -d ${INST_PATH}
+  #pdebug "Decompresing ${POS_LANG} to ${INST_PATH}..."
+  #/usr/bin/unzip ${POS_LANG} -d ${INST_PATH}
 
   pdebug "Changing permissions."
   chmod 755 ${INST_PATH}/start.sh
