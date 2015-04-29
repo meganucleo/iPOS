@@ -30,6 +30,7 @@ set pos_pass ""
 set disccount "Deshabilitado"
 set category_en "Sin categorías"
 array set csv {}
+array set catCsv {}
 
 #Window and container properties
 wm title . "Configurador de punto de Venta"
@@ -299,15 +300,64 @@ proc writeLog {msg} {
   .results.f.textarea configure -state disabled
 }
 
+proc writeLog3 {msg} {
+  .catResults.f.textarea configure -state normal 
+  .catResults.f.textarea insert end "$msg\n"
+  .catResults.f.textarea configure -state disabled
+}
 proc writeLog2 {msg} {
   .r2.f.textarea configure -state normal 
   .r2.f.textarea insert end "$msg\n"
   .r2.f.textarea configure -state disabled
 }
 
+proc parseCatCSV {} {
+  global catFilename
+  global catCsv
+  global .catResults
+  if { $catFilename ne "" } {
+    set fh [open $catFilename]
+    fconfigure $fh -encoding utf-8
+    set num 1 
+    set line_err 0
+    set err 0
+    set errorTxt ""
+
+    while {[gets $fh line] != -1} {
+      set catCsv($num) [csv::split $line]
+      if { [llength $catCsv($num)] != "2" } {
+        append errorTxt "Campos insuficientes o excedentes. La estructura es: 'Número de categoría,Nombre de la categoría'"
+        incr line_err
+      }
+      lassign $catCsv($num) lnum catName
+      if {! [regexp {^[0-9a-zA-Z ]{1,80}$} $catName]} {
+        append errorTxt "Descripción menor a 80 caracteres, sólo alfanuméricos. "
+        incr line_err
+      }
+      if { $line_err > 0 } {
+        set catCsv($num) ""
+        writeLog3 "Línea $num: $errorTxt"
+        incr err
+      }
+      incr num
+      set line_err 0
+      set errorTxt ""
+    }
+    close $fh 
+  }
+  if { $err > 0 } {
+    writeLog3 "======================\nATENCIÓN: $err líneas con error, verifique."
+  } else {
+    writeLog3 "======================\nCSV de categorías Correcto!"
+  }
+}
+
+
 proc parseCSV {} {
   global filename
   global csv
+  global category_en
+  global catCsv
   global .results
   if { $filename ne "" } {
     set fh [open $filename]
@@ -316,9 +366,13 @@ proc parseCSV {} {
     set line_err 0
     set err 0
     set errorTxt ""
-
+   
     while {[gets $fh line] != -1} {
       set csv($num) [csv::split $line]
+      if { [llength $csv($num)] != "8" } {
+        append errorTxt "Campos insuficientes o excedentes. La estructura es: 'Número de producto,ISBN,código de barras,Nombre del libro,0,precio,categoría,impuestos'"
+        incr line_err
+      }
       lassign $csv($num) lnum isbn code descr idy price group taxcat
       #writeLog "No: $lnum, ISBN: $isbn, Code: $code, ID: $idy, $$price, Group: $group, Tax: $taxcat"
       if {! [string is digit $lnum]} {
@@ -353,7 +407,22 @@ proc parseCSV {} {
         append errorTxt "Categoría de impuesto erronea: $taxcat"
         incr line_err
       }
+      #check if categoríes selected
+      if { $category_en == "Con categorías" } {
+        set found "no"
+        foreach {key lineCat} [array get catCsv] { 
+          lassign $lineCat catNum catName 
+          if { $group == $catNum } {
+            set found "yes"
+          }
+        }
+        if { $found == "no" } {
+          append errorTxt "Categoría no encontrada en el archivo de categorías."
+          incr line_err
+        }
+      }
       if { $line_err > 0 } {
+        set csv($num) ""
         writeLog "Línea $num: $errorTxt"
         incr err
       }
@@ -424,17 +493,34 @@ proc execDB {sql} {
 
 proc loadProducts {} {
   global csv
+  global category_en
+  global catCsv
   global db_h
   writeLog2 "Cargando los productos a la base de datos"
   connectDB
   set num 1  
+  set num_cat 1
+  
+
+  if { category_en == "Con categorías" } {
+    foreach {key line} [array get catCSV] {
+      if { $line != "" } { 
+        lassign $line catNum catName
+        execDB "INSERT INTO CATEGORIES (ID, NAME) VALUES ($catNum,$catName);"
+        incr num_cat
+      }
+    }
+    writeLog2 "Categorías importadas: $num_cat"
+  }
 
   foreach {key line} [array get csv] {
-    lassign $line lnum isbn code descr idy price group taxcat
-    #puts "INSERT INTO PRODUCTS (ID,REFERENCE,CODE,NAME,PRICEBUY,PRICESELL,CATEGORY,TAXCAT) VALUES ($lnum,\"$isbn\",\"$code\",\"$descr\",\"$idy\",\"$price\",\"$group\",\"$taxcat\")"
-    execDB "INSERT INTO PRODUCTS (ID,REFERENCE,CODE,NAME,PRICEBUY,PRICESELL,CATEGORY,TAXCAT) VALUES ($lnum,\"$isbn\",\"$code\",\"$descr\",\"$idy\",\"$price\",\"$group\",\"$taxcat\")"
-    execDB "INSERT INTO PRODUCTS_CAT (PRODUCT,CATORDER) VALUES ($lnum,NULL)"
-    incr num
+    if { $line != "" } {
+      lassign $line lnum isbn code descr idy price group taxcat
+      #puts "INSERT INTO PRODUCTS (ID,REFERENCE,CODE,NAME,PRICEBUY,PRICESELL,CATEGORY,TAXCAT) VALUES ($lnum,\"$isbn\",\"$code\",\"$descr\",\"$idy\",\"$price\",\"$group\",\"$taxcat\")"
+      execDB "INSERT INTO PRODUCTS (ID,REFERENCE,CODE,NAME,PRICEBUY,PRICESELL,CATEGORY,TAXCAT) VALUES ($lnum,\"$isbn\",\"$code\",\"$descr\",\"$idy\",\"$price\",\"$group\",\"$taxcat\")"
+      execDB "INSERT INTO PRODUCTS_CAT (PRODUCT,CATORDER) VALUES ($lnum,NULL)"
+      incr num
+    }
   }
   writeLog2 "Productos importados: $num"
 }
