@@ -73,7 +73,7 @@ function warning {
 
 function update {
   $APT update -y
-  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl python-mysqldb libreoffice gcc libcups1-dev libcupsimage2-dev  -y
+  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl python-mysqldb libreoffice gcc libcups2-dev libcupsimage2-dev  -y
 }
 
 function addUser {
@@ -191,5 +191,6 @@ update
 addUser
 install
 setupMysql
+printerInstall
 
 exit 0
