@@ -9,6 +9,7 @@ package require mysqltcl
 
 #set initial values
 set filename ""
+set catFilename ""
 set rc [catch {exec -- /usr/bin/whoami} sys_usr]
 if { $rc != "0" } {
   errorMsg $sys_usr   
@@ -27,6 +28,7 @@ set db_pass "123qweobp"
 set pos_usr ""
 set pos_pass ""
 set disccount "Deshabilitado"
+set category_en "Sin categorías"
 array set csv {}
 
 #Window and container properties
@@ -38,17 +40,24 @@ grid columnconfigure . 0 -weight 1; grid rowconfigure . 0 -weight 1
 ttk::label .container.instructions  \
   -text "Este programa carga una base de datos nueva en éste punto de venta.\n
 Es necesario:\n
-1) Base de datos en formato CSV.\n
+1) Base de datos de categorías y productos en formato CSV.\n
 2) Haber respaldado información de ventas anteriores."
-ttk::label .container.l_db_file -text "Archivo a cargar:"
+ttk::label .container.l_cat_en -text "Uso de categorías:"
+ttk::label .container.l_cat_file -text "Categorías a cargar(CSV):"
+ttk::label .container.l_db_file -text "Productos a cargar(CSV):"
 ttk::label .container.l_db_name -text "Nombre de la base (campaña):"
 ttk::label .container.l_pos_usr -text "Usuario del POS:"
 ttk::label .container.l_pos_pass -text "Clave en el ticket:"
 ttk::label .container.l_pos_dsct -text "Botón de descuento:"
 ttk::label .container.l_pos_tckt -text "Tickets a imprimir:"
 ttk::label .container.l_pos_dsct2 -textvariable disccount 
+ttk::label .container.l_cat_en2 -textvariable category_en 
 
 #Creating entries and buttons
+ttk::checkbutton .container.c_cat_en -variable category_en \
+  -onvalue "Con categorías" -offvalue "Sin categorías" -command enableCatFile
+ttk::entry .container.e_cat_file -width 15 -textvariable catFilename
+ttk::button .container.b_cat_file -text "Buscar" -command findCatFile 
 ttk::entry .container.e_db_file -width 15 -textvariable filename
 ttk::button .container.b_db_file -text "Buscar" -command findFile
 ttk::entry .container.e_db_name -width 25 -textvariable db_name 
@@ -65,25 +74,33 @@ ttk::button .container.b_load_db -text "Cargar Base" -command confirm
 #Distributing elements
 #labels
 grid .container.instructions -column 0 -row 0 -columnspan 3
-grid .container.l_db_file -column 0 -row 1 -sticky e
-grid .container.l_db_name -column 0 -row 2 -sticky e
-grid .container.l_pos_usr -column 0 -row 3 -sticky e
-grid .container.l_pos_pass -column 0 -row 4 -sticky e
-grid .container.l_pos_dsct -column 0 -row 5 -sticky e
-grid .container.l_pos_tckt -column 0 -row 6 -sticky e
-grid .container.l_pos_dsct2 -column 2 -row 5 -sticky w
+grid .container.l_cat_en -column 0 -row 1 -sticky e
+grid .container.l_cat_file -column 0 -row 2 -sticky e
+grid .container.l_db_file -column 0 -row 3 -sticky e
+grid .container.l_db_name -column 0 -row 4 -sticky e
+grid .container.l_pos_usr -column 0 -row 5 -sticky e
+grid .container.l_pos_pass -column 0 -row 6 -sticky e
+grid .container.l_pos_dsct -column 0 -row 7 -sticky e
+grid .container.l_pos_tckt -column 0 -row 8 -sticky e
+grid .container.l_cat_en2 -column 2 -row 1 -sticky w
+grid .container.l_pos_dsct2 -column 2 -row 7 -sticky w
 #entries and buttons
-grid .container.e_db_file -column 1 -row 1 -sticky w 
-grid .container.b_db_file -column 2 -row 1 -sticky e 
-grid .container.e_db_name -column 1 -row 2 -sticky w -columnspan 2
-grid .container.e_pos_usr -column 1 -row 3 -sticky w -columnspan 2
-grid .container.e_pos_pass -column 1 -row 4 -sticky w -columnspan 2
-grid .container.c_pos_dsct -column 1 -row 5 -sticky w 
-grid .container.co_pos_tckt -column 1 -row 6 -sticky w -columnspan 2
-grid .container.b_load_db -column 1 -row 7 -columnspan 2
+grid .container.c_cat_en -column 1 -row 1 -sticky w 
+grid .container.e_cat_file -column 1 -row 2 -sticky we 
+grid .container.b_cat_file -column 2 -row 2 -sticky we 
+grid .container.e_db_file -column 1 -row 3 -sticky we 
+grid .container.b_db_file -column 2 -row 3 -sticky we 
+grid .container.e_db_name -column 1 -row 4 -sticky w -columnspan 2
+grid .container.e_pos_usr -column 1 -row 5 -sticky w -columnspan 2
+grid .container.e_pos_pass -column 1 -row 6 -sticky w -columnspan 2
+grid .container.c_pos_dsct -column 1 -row 7 -sticky w 
+grid .container.co_pos_tckt -column 1 -row 8 -sticky w -columnspan 2
+grid .container.b_load_db -column 1 -row 9 -columnspan 2
 
 #Disable file entry
 .container.e_db_file state disabled
+.container.e_cat_file state disabled
+.container.b_cat_file state disabled
 
 #Set ticket printing number options
 set tickets 2
@@ -92,11 +109,24 @@ set tickets 2
 
 #set padding to all elements
 foreach w [winfo children .container] {grid configure $w -padx 5 -pady 5}
+grid configure .container.e_cat_file -padx 0
+grid configure .container.e_db_file -padx 0
+grid configure .container.b_cat_file -padx 0
+grid configure .container.b_db_file -padx 0
 focus .container.b_db_file
 
 proc errorMsg {msg} {
   tk_messageBox -message $msg -icon error -title "Error"
   exit 1
+}
+
+proc enableCatFile {} {
+  global category_en
+  if { $category_en == "Sin categorías" } {
+    .container.b_cat_file configure -state disabled
+  } else {
+    .container.b_cat_file configure -state normal
+  }
 }
 
 proc validName {P} {
@@ -110,7 +140,16 @@ proc validName {P} {
   }
   return $result
 }
-
+proc findCatFile {} {
+  global catFilename 
+  set type {
+    {{Archivo CSV} {.csv .CSV} }
+  }
+  set catFilename [tk_getOpenFile -filetypes $type]
+  if {$catFilename ne ""} {
+    checkCatCSV
+  }
+}
 proc findFile {} {
   global pos_usr
   global db_name
@@ -194,14 +233,33 @@ proc process {} {
   writeLog2 "CARGA TERMINADA EXITOSAMENTE"
   tk_messageBox -message "Base de datos de productos cargada correctamente" -icon info -title "Base Cargada"
 }
-
+proc checkCatCSV {} {
+  #Creating the window
+  tk::toplevel .catResults
+  grid [ttk::frame .catResults.f -padding "30 20 30 20"] -column 0 -row 0
+  wm title .catResults "Revisión de archivo de categorías"
+  #Creating elements
+  ttk::label .catResults.f.l_result -text "Resultados de revisión de archivo CSV\nCATEGORÍAS"
+  tk::text .catResults.f.textarea -state disabled -width 100 -height 24 -wrap word -yscrollcommand ".catResults.f.s_text set"
+  ttk::scrollbar .catResults.f.s_text -command ".catResults.f.textarea yview" -orient vertical
+  ttk::button .catResults.f.b_ok -text "Cerrar" -command closeCatCSV
+  #Placing elements
+  grid .catResults.f.l_result -column 0 -row 0 -columnspan 2
+  grid .catResults.f.textarea -column 0 -row 1 -sticky nswe
+  grid .catResults.f.s_text -column 1 -row 1 -sticky nsw
+  grid .catResults.f.b_ok -column 0 -row 2 -sticky e -columnspan 2
+  #set padding to all elements
+  foreach w [winfo children .catResults.f] {grid configure $w -padx 5 -pady 5}
+  focus .catResults.f.b_ok
+  parseCatCSV
+}
 proc checkCSV {} {
   #Creating the window
   tk::toplevel .results
   grid [ttk::frame .results.f -padding "30 20 30 20"] -column 0 -row 0
-  wm title .results "Revisión de archivo"
+  wm title .results "Revisión de archivo de productos"
   #Creating elements
-  ttk::label .results.f.l_result -text "Resultados de revisión de archivo CSV"
+  ttk::label .results.f.l_result -text "Resultados de revisión de archivo CSV\nPRODUCTOS"
   tk::text .results.f.textarea -state disabled -width 100 -height 24 -wrap word -yscrollcommand ".results.f.s_text set"
   ttk::scrollbar .results.f.s_text -command ".results.f.textarea yview" -orient vertical
   ttk::button .results.f.b_ok -text "Cerrar" -command closeCSV
@@ -316,6 +374,9 @@ proc closeCSV {} {
   destroy .results
 }
 
+proc closeCatCSV {} {
+  destroy .catResults
+}
 proc closeProcessWindow {} {
   destroy .r2
   exit 0
