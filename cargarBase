@@ -502,7 +502,7 @@ proc loadProducts {} {
   set num_cat 1
   
 
-  if { category_en == "Con categorías" } {
+  if { $category_en == "Con categorías" } {
     foreach {key line} [array get catCSV] {
       if { $line != "" } { 
         lassign $line catNum catName
