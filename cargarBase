@@ -338,6 +338,8 @@ proc parseCatCSV {} {
         set catCsv($num) ""
         writeLog3 "Línea $num: $errorTxt"
         incr err
+      } else {
+         writeLog3 "Categoría agregada: $lnum,$catName"
       }
       incr num
       set line_err 0
@@ -508,6 +510,7 @@ proc loadProducts {} {
         lassign $line catNum catName
         execDB "INSERT INTO CATEGORIES (ID, NAME) VALUES ($catNum,$catName);"
         incr num_cat
+        writeLog2 "Categoría agregada: $catNum,$catName"
       }
     }
     writeLog2 "Categorías importadas: $num_cat"
