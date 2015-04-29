@@ -31,6 +31,9 @@ POS="s/{MYSQL_DB}/${MYSQL_DB}/g;s/{MYSQL_USR}/${MYSQL_USR}/g;s/{MYSQL_PASS}/${MY
 RD="s/{MYSQL_DB}/$MYSQL_DB/g;s/{MYSQL_USR}/$MYSQL_USR/g;s/{MYSQL_PASS}/$MYSQL_PASS/g"
 MS="s/{MYSQL_DB}/${MYSQL_DB}/g;s/{MYSQL_USR}/${MYSQL_USR}/g;s/{MYSQL_PASS}/${MYSQL_PASS}/g;s/{POS_USR}/${POS_USR}/g;s/{POS_PASS}/${POS_PASS}/g"
 
+STAR_SRC=starcupsdrv-src-3.5.0.tar.gz
+STAR_PATH=printer
+
 #FUNCTIONS
 function pdebug {
   if [ "$DEBUG" == "1" ] ; then
@@ -70,7 +73,7 @@ function warning {
 
 function update {
   $APT update -y
-  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl python-mysqldb  -y
+  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl python-mysqldb libreoffice gcc libcups1-dev libcupsimage2-dev  -y
 }
 
 function addUser {
@@ -164,6 +167,22 @@ function setupMysql {
    rm -f ${POS_TMP}.1 
 }
 
+function printerInstall {
+  pdebug "Installing printer..."
+  pdebug "Creating installation directory ${INST_PATH}/${STAR_PATH}"
+  /bin/mkdir -p ${INST_PATH}/${STAR_PATH}
+
+  pdebug "Decompresing ${POS_BIN} to ${INST_PATH}/${STAR_PATH}..."
+  #/usr/bin/unzip ${POS_BIN} -d ${INST_PATH}/${STAR_PATH}
+  /bin/tar zxf ${POS_BIN} -C ${INST_PATH}/${STAR_PATH}   
+  
+  CURRENT=$(pwd)
+  cd ${INST_PATH}/${STAR_PATH}/starcupsdrv
+  pdebug "Compiling printer modules"
+  make
+  make install
+  cd ${CURRENT}
+}
 
 #LOGIC
 checkRoot
