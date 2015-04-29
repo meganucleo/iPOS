@@ -508,7 +508,7 @@ proc loadProducts {} {
     foreach {key line} [array get catCsv] {
       if { $line != "" } { 
         lassign $line catNum catName
-        execDB "INSERT INTO CATEGORIES (ID, NAME) VALUES ($catNum,$catName);"
+        execDB "INSERT INTO CATEGORIES (ID, NAME) VALUES (\"$catNum\",\"$catName\");"
         incr num_cat
         writeLog2 "Categoría agregada: $catNum,$catName"
       }
