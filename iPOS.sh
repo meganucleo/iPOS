@@ -172,9 +172,8 @@ function printerInstall {
   pdebug "Creating installation directory ${INST_PATH}/${STAR_PATH}"
   /bin/mkdir -p ${INST_PATH}/${STAR_PATH}
 
-  pdebug "Decompresing ${POS_BIN} to ${INST_PATH}/${STAR_PATH}..."
-  #/usr/bin/unzip ${POS_BIN} -d ${INST_PATH}/${STAR_PATH}
-  /bin/tar zxf ${POS_BIN} -C ${INST_PATH}/${STAR_PATH}   
+  pdebug "Decompresing ${STAR_SRC} to ${INST_PATH}/${STAR_PATH}..."
+  /bin/tar zxf ${STAR_SRC} -C ${INST_PATH}/${STAR_PATH}   
   
   CURRENT=$(pwd)
   cd ${INST_PATH}/${STAR_PATH}/starcupsdrv
