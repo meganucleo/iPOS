@@ -381,16 +381,16 @@ proc parseCSV {} {
         append errorTxt "Número de línea '$lnum' no es un dígito. "
         incr line_err
       }
-      if {! [regexp {^[0-9]{13}?$} $isbn]} {
+      if {! [regexp {^[0-9A-Z]{13}?$} $isbn]} {
         append errorTxt "ISBN '$isbn' debe tener 13 dígitos. "
         incr line_err
       }
-      if {! [regexp {^[0-9]{13}?$} $code]} {
+      if {! [regexp {^[0-9A-Z]{13}?$} $code]} {
         append errorTxt "El código '$code' debe tener 13 dígitos. "
         incr line_err
       }
       if {! [regexp {^[0-9a-zA-Z ]{1,80}$} $descr]} {
-        append errorTxt "Descripción menor a 80 caracteres, sólo alfanuméricos. "
+        append errorTxt "La descripción debe ser menor a 80 caracteres, sólo alfanuméricos. "
         incr line_err
       }
       if {$idy != 0} {
