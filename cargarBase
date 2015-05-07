@@ -406,7 +406,7 @@ proc parseCSV {} {
         incr line_err
       }
       if {! [regexp {00[1|0]} $taxcat]} {
-        append errorTxt "Categoría de impuesto erronea: $taxcat"
+        append errorTxt "Categoría de impuesto erronea: $taxcat, debe de ser '000' o '001'"
         incr line_err
       }
       #check if categoríes selected
