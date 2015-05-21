@@ -29,6 +29,8 @@ set pos_usr ""
 set pos_pass ""
 set disccount "Deshabilitado"
 set category_en "Sin categorías"
+set ticket_number_en "Deshabilitado"
+set ticket_number "1"
 array set csv {}
 array set catCsv {}
 
@@ -53,6 +55,9 @@ ttk::label .container.l_pos_dsct -text "Botón de descuento:"
 ttk::label .container.l_pos_tckt -text "Tickets a imprimir:"
 ttk::label .container.l_pos_dsct2 -textvariable disccount 
 ttk::label .container.l_cat_en2 -textvariable category_en 
+ttk::label .container.l_tckt_num -text "Iniciar tickets en:"
+ttk::label .container.l_tckt_en -text "Cambiar inicio de tickets"
+ttk::label .container.l_tckt_en2 -textvariable ticket_number_en
 
 #Creating entries and buttons
 ttk::checkbutton .container.c_cat_en -variable category_en \
@@ -71,6 +76,10 @@ ttk::checkbutton .container.c_pos_dsct -variable disccount \
   -onvalue Habilitado -offvalue Deshabilitado
 ttk::combobox .container.co_pos_tckt -width 15 -textvariable tickets 
 ttk::button .container.b_load_db -text "Cargar Base" -command confirm
+ttk::checkbutton .container.c_tckt_en -variable ticket_number_en \
+  -onvalue "Habilitado" -offvalue "Deshabilitado" -command enableTicketNumber
+ttk::entry .container.e_tckt_num -width 25 -textvariable ticket_number
+.container.e_tckt_num configure -validate key -validatecommand {validNumber %P}
 
 #Distributing elements
 #labels
@@ -83,8 +92,11 @@ grid .container.l_pos_usr -column 0 -row 5 -sticky e
 grid .container.l_pos_pass -column 0 -row 6 -sticky e
 grid .container.l_pos_dsct -column 0 -row 7 -sticky e
 grid .container.l_pos_tckt -column 0 -row 8 -sticky e
+grid .container.l_tckt_en -column 0 -row 9 -sticky e
+grid .container.l_tckt_num -column 0 -row 10 -sticky e
 grid .container.l_cat_en2 -column 2 -row 1 -sticky w
 grid .container.l_pos_dsct2 -column 2 -row 7 -sticky w
+grid .container.l_tckt_en2 -column 2 -row 9 -sticky e
 #entries and buttons
 grid .container.c_cat_en -column 1 -row 1 -sticky w 
 grid .container.e_cat_file -column 1 -row 2 -sticky we 
@@ -96,12 +108,15 @@ grid .container.e_pos_usr -column 1 -row 5 -sticky w -columnspan 2
 grid .container.e_pos_pass -column 1 -row 6 -sticky w -columnspan 2
 grid .container.c_pos_dsct -column 1 -row 7 -sticky w 
 grid .container.co_pos_tckt -column 1 -row 8 -sticky w -columnspan 2
-grid .container.b_load_db -column 1 -row 9 -columnspan 2
+grid .container.c_tckt_en -column 1 -row 9 -sticky w
+grid .container.e_tckt_num -column 1 -row 10 -sticky w -columnspan 2
+grid .container.b_load_db -column 1 -row 11 -columnspan 2 -sticky wens
 
 #Disable file entry
 .container.e_db_file state disabled
 .container.e_cat_file state disabled
 .container.b_cat_file state disabled
+.container.e_tckt_num state disabled
 
 #Set ticket printing number options
 set tickets 2
@@ -130,6 +145,15 @@ proc enableCatFile {} {
   }
 }
 
+proc enableTicketNumber {} {
+  global ticket_number_en
+  if { $ticket_number_en == "Deshabilitado" } {
+    .container.e_tckt_num configure -state disabled
+  } else {
+    .container.e_tckt_num configure -state normal
+  }
+}
+
 proc validName {P} {
   if {[regexp {[^a-zA-Z0-9_]} $P test]} {
     tk_messageBox -title "Advertencia" \
@@ -141,6 +165,19 @@ proc validName {P} {
   }
   return $result
 }
+
+proc validNumber {P} {
+  if {[regexp {[^0-9]} $P test]} {
+    tk_messageBox -title "Advertencia" \
+       -message "Utilice sólo números." \
+       -icon warning
+    set result 0
+  } else {
+    set result 1
+  }
+  return $result
+}
+
 proc findCatFile {} {
   global catFilename 
   set type {
@@ -230,6 +267,7 @@ proc process {} {
   loadProducts
   buttonDisccount
   changeTicket
+  ticketNumber
   changeProperties
   writeLog2 "CARGA TERMINADA EXITOSAMENTE"
   tk_messageBox -message "Base de datos de productos cargada correctamente" -icon info -title "Base Cargada"
@@ -563,6 +601,17 @@ proc changeTicket {} {
     regsub -all {{POS_PASS}} $file_data $pos_pass file_data
     #Editing existing Printer.Ticket
     execDB "UPDATE RESOURCES SET CONTENT='$file_data' WHERE NAME='Printer.Ticket'"
+  }
+}
+
+proc ticketNumber {} {
+  global ticket_number_en
+  global ticket_number
+  global wd
+  if { $ticket_number_en == "Habilitado" } {
+    writeLog2 "Cambiando número de inicio del ticket"
+    #Editing existing Ticket.Buttons resource
+    execDB "UPDATE TICKETSNUM SET ID = '$ticket_number' WHERE ID =  '1'"
   }
 }
 
