@@ -10,4 +10,4 @@ Exec=/opt/DPOS/start.sh
 Comment[es_MX]=Punto de venta
 Name=PuntoVenta
 Comment=Punto de venta
-Icon=/opt/DPOS/openbravo-logo-128.png
+Icon=/opt/DPOS/icons/openbravo.png

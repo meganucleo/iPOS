@@ -26,10 +26,12 @@ POS_PROPERTIES=openbravopos.properties
 INST_PATH=/opt/DPOS
 #POS_BIN=openbravopos_2.30_bin.zip
 #POS_LANG=openbravopos_2.20_es.zip
-POS_BIN=DeltiPOS-2.30.tar.gz
+#POS_BIN=DeltiPOS-2.30.tar.gz
+POS_BIN=DeltiPOS-2.30.1.tar.gz
 POS="s/{MYSQL_DB}/${MYSQL_DB}/g;s/{MYSQL_USR}/${MYSQL_USR}/g;s/{MYSQL_PASS}/${MYSQL_PASS_C}/g"
 RD="s/{MYSQL_DB}/$MYSQL_DB/g;s/{MYSQL_USR}/$MYSQL_USR/g;s/{MYSQL_PASS}/$MYSQL_PASS/g"
 MS="s/{MYSQL_DB}/${MYSQL_DB}/g;s/{MYSQL_USR}/${MYSQL_USR}/g;s/{MYSQL_PASS}/${MYSQL_PASS}/g;s/{POS_USR}/${POS_USR}/g;s/{POS_PASS}/${POS_PASS}/g"
+HM="s/{HOME_USR}/${END_USER}/g"
 
 STAR_SRC=starcupsdrv-src-3.5.0.tar.gz
 STAR_PATH=printer
@@ -107,14 +109,7 @@ function install {
   pdebug "Changing permissions."
   chmod 755 ${INST_PATH}/start.sh
 
-  pdebug "Installing shortcuts"
-  [ ! -d "/home/${END_USER}/Escritorio" ] && mkdir -p /home/${END_USER}/Escritorio && chmod 755 /home/${END_USER}/Escritorio
-  /bin/cp -f shortcuts/POS.desktop /home/${END_USER}/Escritorio 
-  chmod 755 /home/${END_USER}/Escritorio/POS.desktop 
-  chown ${END_USER}.${END_USER} /home/${END_USER}/Escritorio/POS.desktop
-  # English support
-  [ -d "/home/${END_USER}/Desktop" ] && /bin/cp -f shortcuts/POS.desktop /home/${END_USER}/Desktop 
-  [ -f "/home/${END_USER}/Desktop/POS.desktop" ] && chmod 755 /home/${END_USER}/Desktop/POS.desktop && chown ${END_USER}.${END_USER} /home/${END_USER}/Desktop/POS.desktop
+  installShortcut(POS.desktop)
 
   pdebug "Installing ReporteDiario.py"
   pdebug "Setting initial data to py script"
@@ -142,22 +137,38 @@ function install {
   pdebug "Setting permissions to py script"
   chmod 755 /bin/ReporteCompleto.py
 
-  pdebug "Installing shortcuts Reporte"
-  /bin/cp -f shortcuts/ReporteVenta.desktop /home/${END_USER}/Escritorio
-  chmod 755 /home/${END_USER}/Escritorio/ReporteVenta.desktop 
-  chown ${END_USER}.${END_USER} /home/${END_USER}/Escritorio/ReporteVenta.desktop
-  # English support
-  [ -d "/home/${END_USER}/Desktop" ] && /bin/cp -f shortcuts/ReporteVenta.desktop /home/${END_USER}/Desktop 
-  [ -f "/home/${END_USER}/Desktop/POS.desktop" ] && chmod 755 /home/${END_USER}/Desktop/ReporteVenta.desktop && chown ${END_USER}.${END_USER} /home/${END_USER}/Desktop/ReporteVenta.desktop
-  pdebug "Installing shortcuts Cargar Base"
-  /bin/cp -f shortcuts/cargarBase.desktop /home/${END_USER}/Escritorio
-  chmod 755 /home/${END_USER}/Escritorio/cargarBase.desktop 
-  chown ${END_USER}.${END_USER} /home/${END_USER}/Escritorio/cargarBase.desktop
-  # English support
-  [ -d "/home/${END_USER}/Desktop" ] && /bin/cp -f shortcuts/cargarBase.desktop /home/${END_USER}/Desktop 
-  [ -f "/home/${END_USER}/Desktop/POS.desktop" ] && chmod 755 /home/${END_USER}/Desktop/cargarBase.desktop && chown ${END_USER}.${END_USER} /home/${END_USER}/Desktop/cargarBase.desktop
+  installShortcut(ReporteVenta.desktop)
+
+  installShortcut(cargarBase.desktop)
+
+  # Installing SAP icons
+  pdebug "Setting initial data to SAP.desktop"
+  mv shortcuts/SAP.desktop shortcuts/SAP.desktop.1
+  sed -e "$HM" shortcuts/SAP.desktop.1 > shortcuts/SAP.desktop
+  installShortcut(SAP.desktop)
+  pdebug "Erasing temporal file"
+  rm -f shortcuts/SAP.desktop
+  mv shortcuts/SAP.desktop.1 shortcuts/SAP.desktop
+
+  pdebug "Setting initial data to SAPLocal.desktop"
+  mv shortcuts/SAPLocal.desktop shortcuts/SAPLocal.desktop.1
+  sed -e "$HM" shortcuts/SAPLocal.desktop.1 > shortcuts/SAPLocal.desktop
+  installShortcut(SAPLocal.desktop)
+  pdebug "Erasing temporal file"
+  rm -f shortcuts/SAPLocal.desktop
+  mv shortcuts/SAPLocal.desktop.1 shortcuts/SAPLocal.desktop
 
 
+}
+
+function installShortcut {
+  short=${1} 
+  pdebug "Installing shortcut ${short}"
+  [ -d "/home/${END_USER}/Escritorio" ] && /bin/cp -f shortcuts/${short} /home/${END_USER}/Desktop 
+  [ -f "/home/${END_USER}/Escritorio/${short}" ] && chmod 755 /home/${END_USER}/Escritorio/${short} && chown ${END_USER}.${END_USER} /home/${END_USER}/Escritorio/${short}
+  # English support
+  [ -d "/home/${END_USER}/Desktop" ] && /bin/cp -f shortcuts/${short} /home/${END_USER}/Desktop 
+  [ -f "/home/${END_USER}/Desktop/${short}" ] && chmod 755 /home/${END_USER}/Desktop/${short} && chown ${END_USER}.${END_USER} /home/${END_USER}/Desktop/${short}
 }
 
 function setupMysql {

@@ -7,5 +7,5 @@ Terminal=false
 Exec=rdesktop -k es -T SAP_LOCAL -u vdirectas -p vdirectas -g 1350x698 -r disk:vdirectas=/home/vdirectas/Escritorio 10.1.3.10
 Name=SAP
 Comment=SAP
-Icon=/home/vdirectas/Imágenes/SAP_2011_logo.svg
+Icon=/opt/DPOS/icons/SAP.svg
 Name[es_MX]=SAP LOCAL
