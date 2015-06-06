@@ -73,7 +73,7 @@ function warning {
 
 function update {
   $APT update -y
-  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl python-mysqldb rdesktop hplip-gui hpijs-ppds hplip libreoffice libreoffice-l10n-es phpmyadmin -y
+  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl python-mysqldb rdesktop hplip-gui hpijs-ppds hplip phpmyadmin libcups2-dev libcupsimage2-dev -y
 }
 
 function addUser {
@@ -128,6 +128,19 @@ function install {
   pdebug "Setting permissions to py script"
   chmod 755 /bin/ReporteDiario.py
   
+  pdebug "Installing ReporteCompleto.py"
+  pdebug "Setting initial data to py script"
+  sed -e "$RD" ReporteCompleto.py > ReporteCompleto.py.1
+  
+  pdebug "Installing py script"
+  /bin/cp -f ReporteCompleto.py.1 /bin/ReporteCompleto.py
+  
+  pdebug "Erasing temporal file"
+  rm -f ReporteCompleto.py.1
+
+  pdebug "Setting permissions to py script"
+  chmod 755 /bin/ReporteCompleto.py
+
   pdebug "Installing shortcuts Reporte"
   /bin/cp -f shortcuts/ReporteVenta.desktop /home/${END_USER}/Escritorio
   chmod 755 /home/${END_USER}/Escritorio/ReporteVenta.desktop 
