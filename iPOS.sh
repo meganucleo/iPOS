@@ -74,6 +74,7 @@ function warning {
 function update {
   $APT update -y
   $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl python-mysqldb rdesktop hplip-gui hpijs-ppds hplip phpmyadmin libcups2-dev libcupsimage2-dev -y
+  $APT remove abiword gnumeric -y
 }
 
 function addUser {

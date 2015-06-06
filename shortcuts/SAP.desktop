@@ -1,0 +1,11 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=rdesktop -k es -T SAP_DELTI_MATRIZ -u vdirectas -p vdirectas -g 1350x698 -r disk:vdirectas=/home/vdirectas/Escritorio mail.delti.com.mx:6031
+Name=SAP
+Comment=SAP
+Icon=/home/vdirectas/Imágenes/SAP_2011_logo.svg
+Name[es_MX]=SAP Remoto
