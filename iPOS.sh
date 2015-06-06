@@ -88,6 +88,8 @@ function addUser {
   else
     pdebug "Creating ${END_USER} user."
     /usr/sbin/useradd -s /bin/bash -m -p "`/usr/bin/openssl passwd -1 ${END_USER_PASS}`" ${END_USER}
+    mkdir -p /home/${END_USER}
+    chown ${END_USER}.${END_USER} /home/${END_USER}
   fi   
 }
 
