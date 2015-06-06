@@ -109,7 +109,7 @@ function install {
   pdebug "Changing permissions."
   chmod 755 ${INST_PATH}/start.sh
 
-  installShortcut("POS.desktop")
+  installShortcut "POS.desktop"
 
   pdebug "Installing ReporteDiario.py"
   pdebug "Setting initial data to py script"
@@ -137,15 +137,15 @@ function install {
   pdebug "Setting permissions to py script"
   chmod 755 /bin/ReporteCompleto.py
 
-  installShortcut("ReporteVenta.desktop")
+  installShortcut "ReporteVenta.desktop"
 
-  installShortcut("cargarBase.desktop")
+  installShortcut "cargarBase.desktop"
 
   # Installing SAP icons
   pdebug "Setting initial data to SAP.desktop"
   mv shortcuts/SAP.desktop shortcuts/SAP.desktop.1
   sed -e "$HM" shortcuts/SAP.desktop.1 > shortcuts/SAP.desktop
-  installShortcut("SAP.desktop")
+  installShortcut "SAP.desktop"
   pdebug "Erasing temporal file"
   rm -f shortcuts/SAP.desktop
   mv shortcuts/SAP.desktop.1 shortcuts/SAP.desktop
@@ -153,7 +153,7 @@ function install {
   pdebug "Setting initial data to SAPLocal.desktop"
   mv shortcuts/SAPLocal.desktop shortcuts/SAPLocal.desktop.1
   sed -e "$HM" shortcuts/SAPLocal.desktop.1 > shortcuts/SAPLocal.desktop
-  installShortcut("SAPLocal.desktop")
+  installShortcut "SAPLocal.desktop"
   pdebug "Erasing temporal file"
   rm -f shortcuts/SAPLocal.desktop
   mv shortcuts/SAPLocal.desktop.1 shortcuts/SAPLocal.desktop
