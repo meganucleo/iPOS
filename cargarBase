@@ -441,6 +441,8 @@ proc parseCSV {} {
         set descr cat($descr,".d")
         append errorTxt "Nueva descripción creada: '$descr'"
         incr line_err
+      } else {
+        set producs_descr($descr) 1
       }
       #if {! [regexp {^[0-9a-zA-Z ]{1,80}$} $descr]} {
       #  append errorTxt "La descripción debe ser menor a 80 caracteres, sólo alfanuméricos. "
