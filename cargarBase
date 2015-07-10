@@ -554,15 +554,36 @@ proc loadProducts {} {
     writeLog2 "Categorías importadas: $num_cat"
   }
 
+  array set products_isbn {}
+  array set products_descr {}
+  array set products {}
+
   foreach {key line} [array get csv] {
+    set clear "1"
     if { $line != "" } {
       lassign $line lnum isbn code descr idy price group taxcat
-      #puts "INSERT INTO PRODUCTS (ID,REFERENCE,CODE,NAME,PRICEBUY,PRICESELL,CATEGORY,TAXCAT) VALUES ($lnum,\"$isbn\",\"$code\",\"$descr\",\"$idy\",\"$price\",\"$group\",\"$taxcat\")"
-      execDB "INSERT INTO PRODUCTS (ID,REFERENCE,CODE,NAME,PRICEBUY,PRICESELL,CATEGORY,TAXCAT) VALUES ($lnum,\"$isbn\",\"$code\",\"$descr\",\"$idy\",\"$price\",\"$group\",\"$taxcat\")"
-      if { $category_en == "Con categorías" } {
-        execDB "INSERT INTO PRODUCTS_CAT (PRODUCT,CATORDER) VALUES ($lnum,NULL)"
+      
+      if { ![ info exists products_isbn($isbn) ] } {
+        set products_isbn($isbn) 1
       }
-      incr num
+      else {
+        set clear "0"
+      }
+      if { $clear == "1" } {
+        if { ![ info exists products_descr($descr) ] } {
+          set products_descr($descr) 1
+        }
+        else {
+          set descr cat($descr,".d")
+          set products_descr($descr) 1
+        }
+
+        execDB "INSERT INTO PRODUCTS (ID,REFERENCE,CODE,NAME,PRICEBUY,PRICESELL,CATEGORY,TAXCAT) VALUES ($lnum,\"$isbn\",\"$code\",\"$descr\",\"$idy\",\"$price\",\"$group\",\"$taxcat\")"
+        if { $category_en == "Con categorías" } {
+          execDB "INSERT INTO PRODUCTS_CAT (PRODUCT,CATORDER) VALUES ($lnum,NULL)"
+        }
+        incr num
+      }
     }
   }
   writeLog2 "Productos importados: $num"
