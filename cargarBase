@@ -429,8 +429,7 @@ proc parseCSV {} {
       if { [ info exists products_isbn($isbn) ] } {
         append errorTxt "ISBN '$isbn' repetido."
         incr line_err
-      }
-      else {
+      } else {
         set products_isbn($isbn) 1
       }
       if {! [regexp {^[0-9A-Z]{13}?$} $code]} {
