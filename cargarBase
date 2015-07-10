@@ -540,7 +540,7 @@ proc loadProducts {} {
   connectDB
   set num 1  
   set num_cat 1
-  
+  set RE {[][{}\$\s\u0100-\uffff]}
 
   if { $category_en == "Con categorías" } {
     foreach {key line} [array get catCsv] {
@@ -562,6 +562,7 @@ proc loadProducts {} {
     set clear "1"
     if { $line != "" } {
       lassign $line lnum isbn code descr idy price group taxcat
+      regsub -all $RE $descr "" descr
       
       if { ![ info exists products_isbn($isbn) ] } {
         set products_isbn($isbn) 1
