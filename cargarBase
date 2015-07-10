@@ -406,6 +406,9 @@ proc parseCSV {} {
     set line_err 0
     set err 0
     set errorTxt ""
+
+    array set products_isbn {}
+    array set products_descr {}
    
     while {[gets $fh line] != -1} {
       set csv($num) [csv::split $line]
@@ -423,14 +426,25 @@ proc parseCSV {} {
         append errorTxt "ISBN '$isbn' debe tener 13 dígitos. "
         incr line_err
       }
+      if { [ info exists products_isbn($isbn) ] } {
+        append errorTxt "ISBN '$isbn' repetido."
+        incr line_err
+      }
+      else {
+        set products_isbn($isbn) 1
+      }
       if {! [regexp {^[0-9A-Z]{13}?$} $code]} {
         append errorTxt "El código '$code' debe tener 13 dígitos. "
         incr line_err
       }
-      if {! [regexp {^[0-9a-zA-Z ]{1,80}$} $descr]} {
-        append errorTxt "La descripción debe ser menor a 80 caracteres, sólo alfanuméricos. "
-        incr line_err
+      regsub -all {[^0-9a-zA-Z\S]} $descr "" descr }
+      if { [info exists products_descr($descr) ] } {
+        set descr cat($descr,".d")
       }
+      #if {! [regexp {^[0-9a-zA-Z ]{1,80}$} $descr]} {
+      #  append errorTxt "La descripción debe ser menor a 80 caracteres, sólo alfanuméricos. "
+      #  incr line_err
+      #}
       if {$idy != 0} {
         append errorTxt "ID '$idy' debe de ser 0. "
         incr line_err
@@ -559,32 +573,15 @@ proc loadProducts {} {
   array set products {}
 
   foreach {key line} [array get csv] {
-    set clear "1"
     if { $line != "" } {
       lassign $line lnum isbn code descr idy price group taxcat
-      regsub -all $RE $descr "" descr
-      
-      if { ![ info exists products_isbn($isbn) ] } {
-        set products_isbn($isbn) 1
-      }
-      else {
-        set clear "0"
-      }
-      if { $clear == "1" } {
-        if { ![ info exists products_descr($descr) ] } {
-          set products_descr($descr) 1
-        }
-        else {
-          set descr cat($descr,".d")
-          set products_descr($descr) 1
-        }
-
-        execDB "INSERT INTO PRODUCTS (ID,REFERENCE,CODE,NAME,PRICEBUY,PRICESELL,CATEGORY,TAXCAT) VALUES ($lnum,\"$isbn\",\"$code\",\"$descr\",\"$idy\",\"$price\",\"$group\",\"$taxcat\")"
-        if { $category_en == "Con categorías" } {
-          execDB "INSERT INTO PRODUCTS_CAT (PRODUCT,CATORDER) VALUES ($lnum,NULL)"
-        }
-        incr num
-      }
+     
+     
+     execDB "INSERT INTO PRODUCTS (ID,REFERENCE,CODE,NAME,PRICEBUY,PRICESELL,CATEGORY,TAXCAT) VALUES ($lnum,\"$isbn\",\"$code\",\"$descr\",\"$idy\",\"$price\",\"$group\",\"$taxcat\")"
+     if { $category_en == "Con categorías" } {
+       execDB "INSERT INTO PRODUCTS_CAT (PRODUCT,CATORDER) VALUES ($lnum,NULL)"
+     }
+     incr num
     }
   }
   writeLog2 "Productos importados: $num"
