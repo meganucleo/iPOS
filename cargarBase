@@ -482,7 +482,7 @@ proc parseCSV {} {
       incr num
       set line_err 0
       set errorTxt ""
-      set csv($num) cat(lnum,",",isbn,",",code ,",",descr ,",",idy ,",",price ,",",group ,",",taxcat)
+      set csv($num) cat($lnum,",",$isbn,",",$code ,",",$descr ,",",$idy ,",",$price ,",",$group ,",",$taxcat)
     }
     close $fh 
   }
