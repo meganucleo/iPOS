@@ -437,7 +437,7 @@ proc parseCSV {} {
         append errorTxt "El código '$code' debe tener 13 dígitos. "
         incr line_err
       }
-      regsub -all {[^0-9a-zA-Z\S]} $descr "" descr }
+      regsub -all {[^0-9a-zA-Z\S]} $descr "" descr 
       if { [info exists products_descr($descr) ] } {
         set descr cat($descr,".d")
       }
