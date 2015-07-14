@@ -290,6 +290,7 @@ proc checkCatCSV {} {
   #set padding to all elements
   foreach w [winfo children .catResults.f] {grid configure $w -padx 5 -pady 5}
   focus .catResults.f.b_ok
+  puts "antes de parseCat"
   parseCatCSV
 }
 proc checkCSV {} {
