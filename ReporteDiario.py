@@ -33,10 +33,31 @@ cur=db.cursor()
 cur.execute(dbQuery)
 
 rows=cur.fetchall()
+
+#Preprocesing data for customization
+rows_ready=[]
+line_num=1
+for line in rows:
+        doc_num,num,code,description,quantity,currency,price,discount,tax,whscode,ticket,sucursal=line
+        num=line_num
+        description=""
+        currency="$"
+        if tax == 0.16:
+                tax = "A5"
+        else:
+                tax = "A0"
+        whscode="AST"
+        sucursal=dbSchema
+        line2=[]
+        line2.extend((doc_num,num,code,description,quantity,currency,price,discount,tax,whscode,ticket,sucursal))
+        rows_ready.append(line2)
+        line_num+=1
+
+
 fp=open(output,'w')
 fp.write("ParentKey,LineNum,ItemCode,ItemDescription,Quantity,Currency,UnitPrice,DiscountPercent,TaxCode,WhsCode,U_Ticket,U_Sucursal\n")
 fp.write("Numero de Documento,Linea,Codigo Articulo,Descripcion,Cantidad,Moneda,Precio por unidad,Porcentaje Desc,Codigo Imp,WhsCode,U_Ticket,U_Sucursal\n")
 myFile=csv.writer(fp)
-myFile.writerows(rows)
+myFile.writerows(rows_ready)
 fp.close()
 
