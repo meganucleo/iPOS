@@ -1,0 +1,3 @@
+DocNum,DocType,HandWritten,DocDate,CardCode,CardName,DocCurrency,Series,Comments
+Numero de Documento,Tipo de Documento,No Cambiar,DocDate,Clave Cliente,Nombre Cliente,Monea,Series,Comments
+1,I,tNO,20150710,C500000,,$,287,Venta del Sucursal PSA1 - VENTA  10.07.2015
