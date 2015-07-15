@@ -14,13 +14,24 @@ config="openbravopos.properties"
 home=commands.getoutput("echo $HOME")
 
 dbSchema=commands.getoutput("egrep 'db\.URL' "+home+"/"+config+" | egrep -o '[a-zA-Z0-9\_]+$'")
-output=home+'/Escritorio/Lines.csv'
+folder='/Escritorio/shared'
+output=home+folder+'/Lines.csv'
 
 now=date.today()
 D3=now.strftime("%Y%m%d")
 I3=now.strftime("%d.%m.%Y")
-content="DocNum,DocType,HandWritten,DocDate,CardCode,CardName,DocCurrency,Series,Comments\r\nNumero de Documento,Tipo de Documento,No Cambiar,DocDate,Clave Cliente,Nombre Cliente,Monea,Series,Comments\r\n1,I,tNO,"+D3+",C500000,,$,287,Venta de Sucursal "+dbSchema+" - VENTA "+I3+"\r\n"
-output2=home+'/Escritorio/Header.csv'
+
+if dbSchema == "PSA1":
+        cclient="C500000"
+elif dbSchema == "PSA2":
+        cclient="C500011"
+elif dbSchema == "PSA3":
+        cclient="C500012"
+else:
+        cclient="C500000"
+
+content="DocNum,DocType,HandWritten,DocDate,CardCode,CardName,DocCurrency,Series,Comments\r\nNumero de Documento,Tipo de Documento,No Cambiar,DocDate,Clave Cliente,Nombre Cliente,Monea,Series,Comments\r\n1,I,tNO,"+D3+","+cclient+",,$,287,Venta de Sucursal "+dbSchema+" - VENTA "+I3+"\r\n"
+output2=home+folder+'/Header.csv'
 fp=open(output2,'w')
 fp.write(content)
 fp.close()
