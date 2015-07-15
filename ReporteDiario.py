@@ -55,9 +55,12 @@ for line in rows:
 
 
 fp=open(output,'w')
-fp.write("ParentKey,LineNum,ItemCode,ItemDescription,Quantity,Currency,UnitPrice,DiscountPercent,TaxCode,WhsCode,U_Ticket,U_Sucursal\n")
-fp.write("Numero de Documento,Linea,Codigo Articulo,Descripcion,Cantidad,Moneda,Precio por unidad,Porcentaje Desc,Codigo Imp,WhsCode,U_Ticket,U_Sucursal\n")
+fp.write("ParentKey,LineNum,ItemCode,ItemDescription,Quantity,Currency,UnitPrice,DiscountPercent,TaxCode,WhsCode,U_Ticket,U_Sucursal\r\n")
+fp.write("Numero de Documento,Linea,Codigo Articulo,Descripcion,Cantidad,Moneda,Precio por unidad,Porcentaje Desc,Codigo Imp,WhsCode,U_Ticket,U_Sucursal\r\n")
 myFile=csv.writer(fp)
 myFile.writerows(rows_ready)
 fp.close()
 
+#Convirtiendo de unix a windows
+status,out1=commands.getstatusoutput("sed -i 's/$/\r/' "+output)
+status,out2=commands.getstatusoutput("sed -i 's/$/\r/' "+output2)
