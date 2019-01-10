@@ -523,7 +523,7 @@ proc prepareDBSeed {} {
     errorMsg $msg   
   }
   writeLog2 "Cargando base de datos..."
-  set rc [catch { exec -- mysql -u root --password=$db_root < /home/$sys_usr/$db_name.sql} msg ]
+  set rc [catch { exec -- mysql -u root --password=$db_root < /home/$sys_usr/$db_name.sql 2>/dev/null} msg ]
   if { $rc != "0" } {
     errorMsg $msg
   }
