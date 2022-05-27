@@ -13,7 +13,8 @@ config="openbravopos.properties"
 
 home=commands.getoutput("echo $HOME")
 
-dbSchema=commands.getoutput("egrep 'db\.URL' "+home+"/"+config+" | egrep -o '[a-zA-Z0-9\_]+$'")
+#dbSchema=commands.getoutput("egrep 'db\.URL' "+home+"/"+config+" | egrep -o '[a-zA-Z0-9\_]+$'")
+dbSchema=commands.getoutput("egrep 'db\.URL' "+home+"/"+config+" | egrep -o '[a-zA-Z0-9\_\?\\=]+$'  | rev | cut -c 15- | rev")
 folder='/Escritorio/shared'
 output=home+folder+'/Lines.csv'
 
