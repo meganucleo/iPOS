@@ -29,7 +29,7 @@ INST_PATH=/opt/DPOS
 #POS_BIN=DeltiPOS-2.30.tar.gz
 POS_BIN=DeltiPOS-2.30.1.tar.gz
 POS="s/{MYSQL_DB}/${MYSQL_DB}/g;s/{MYSQL_USR}/${MYSQL_USR}/g;s/{MYSQL_PASS}/${MYSQL_PASS_C}/g"
-RD="s/{MYSQL_DB}/$MYSQL_DB/g;s/{MYSQL_USR}/$MYSQL_USR/g;s/{MYSQL_PASS}/$MYSQL_PASS/g"
+RD="s/{MYSQL_USR}/$MYSQL_USR/g;s/{MYSQL_PASS}/$MYSQL_PASS/g"
 MS="s/{MYSQL_DB}/${MYSQL_DB}/g;s/{MYSQL_USR}/${MYSQL_USR}/g;s/{MYSQL_PASS}/${MYSQL_PASS}/g;s/{POS_USR}/${POS_USR}/g;s/{POS_PASS}/${POS_PASS}/g"
 HM="s/{HOME_USR}/${END_USER}/g"
 
@@ -75,7 +75,7 @@ function warning {
 
 function update {
   $APT update -y
-  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl python-mysqldb rdesktop hplip-gui hpijs-ppds hplip phpmyadmin libcups2-dev libcupsimage2-dev -y
+  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl python-mysqldb rdesktop hplip-gui hpijs-ppds hplip phpmyadmin libcups2-dev libcupsimage2-dev python-xlsxwriter -y
   $APT remove abiword gnumeric -y
 }
 
