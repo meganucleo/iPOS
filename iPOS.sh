@@ -4,7 +4,7 @@
 # 18/04/2015
 
 #VARIABLES
-APT=/usr/bin/apt-get
+APT="/usr/bin/apt-get"
 DEBUG=1
 
 END_USER=vdirectas
@@ -71,12 +71,14 @@ function warning {
     pdebug "Exiting..."
     exit 0
   fi
-}
+
 
 function update {
   $APT update -y
-  $APT install vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl python-mysqldb rdesktop hplip-gui hpijs-ppds hplip phpmyadmin libcups2-dev libcupsimage2-dev python-xlsxwriter -y
-  $APT remove abiword gnumeric -y
+  sleep 5
+  $APT install -y vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl python-mysqldb rdesktop hplip-gui hpijs-ppds hplip phpmyadmin libcups2-dev libcupsimage2-dev python-xlsxwriter -y
+  sleep 5
+  $APT remove -y abiword gnumeric 
 }
 
 function addUser {
