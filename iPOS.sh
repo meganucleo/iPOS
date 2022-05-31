@@ -210,7 +210,7 @@ function printerInstall {
   make
   make install
   cd ${CURRENT}
-  /usr/bin/service cups restart
+  /usr/sbin/service cups restart
 }
 
 #LOGIC
