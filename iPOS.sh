@@ -71,7 +71,7 @@ function warning {
     pdebug "Exiting..."
     exit 0
   fi
-
+}
 
 function update {
   $APT update -y
