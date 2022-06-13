@@ -1,6 +1,6 @@
 #!/usr/bin/tclsh
 #Leon Ramos 2015
-#SOPORTEYA.MX
+#Meganucleo.mx
 #@fulvous
 
 package require Tk
@@ -29,10 +29,31 @@ set pos_usr ""
 set pos_pass ""
 set disccount "Deshabilitado"
 set category_en "Sin categorías"
+set invoice "Deshabilitado"
 set ticket_number_en "Deshabilitado"
 set ticket_number "1"
 array set csv {}
 array set catCsv {}
+
+#Informacion de facturacion
+set invoice_text "<line>
+<text align=\"center\" length=\"42\">Si deseas factura ingresa tus datos en:</text>
+</line>
+<line>
+<text align=\"center\" length=\"42\">https://ventasdirectas.delti.com.mx</text>
+</line>
+<line>
+<text align=\"center\" length=\"42\">Usuario: {POS_USR}</text>
+</line>
+<line>
+<text align=\"center\" length=\"42\">Contraseña: {POS_PASS}</text> 
+</line>
+<line>
+<text align=\"center\" length=\"42\">Después de la fecha de compra solo tienes</text> 
+</line>
+<line>
+<text align=\"center\" length=\"42\">cinco días para solicitar tu factura</text> 
+</line>"
 
 #Window and container properties
 wm title . "Configurador de punto de Venta"
@@ -55,6 +76,8 @@ ttk::label .container.l_pos_dsct -text "Botón de descuento:"
 ttk::label .container.l_pos_tckt -text "Tickets a imprimir:"
 ttk::label .container.l_pos_dsct2 -textvariable disccount 
 ttk::label .container.l_cat_en2 -textvariable category_en 
+ttk::label .container.l_pos_fact -text "Leyenda de factura:"
+ttk::label .container.l_pos_fact2 -textvariable invoice 
 ttk::label .container.l_tckt_num -text "Iniciar tickets en:"
 ttk::label .container.l_tckt_en -text "Cambiar inicio de tickets"
 ttk::label .container.l_tckt_en2 -textvariable ticket_number_en
@@ -74,6 +97,8 @@ ttk::entry .container.e_pos_pass -width 25 -textvariable pos_pass
 .container.e_pos_pass configure -validate key -validatecommand  {validName %P}
 ttk::checkbutton .container.c_pos_dsct -variable disccount \
   -onvalue Habilitado -offvalue Deshabilitado
+ttk::checkbutton .container.c_pos_fact -variable invoice \
+  -onvalue Habilitado -offvalue Deshabilitado
 ttk::combobox .container.co_pos_tckt -width 15 -textvariable tickets 
 ttk::button .container.b_load_db -text "Cargar Base" -command confirm
 ttk::checkbutton .container.c_tckt_en -variable ticket_number_en \
@@ -91,11 +116,13 @@ grid .container.l_db_name -column 0 -row 4 -sticky e
 grid .container.l_pos_usr -column 0 -row 5 -sticky e
 grid .container.l_pos_pass -column 0 -row 6 -sticky e
 grid .container.l_pos_dsct -column 0 -row 7 -sticky e
-grid .container.l_pos_tckt -column 0 -row 8 -sticky e
-grid .container.l_tckt_en -column 0 -row 9 -sticky e
-grid .container.l_tckt_num -column 0 -row 10 -sticky e
+grid .container.l_pos_fact -column 0 -row 8 -sticky e
+grid .container.l_pos_tckt -column 0 -row 9 -sticky e
+grid .container.l_tckt_en -column 0 -row 10 -sticky e
+grid .container.l_tckt_num -column 0 -row 11 -sticky e
 grid .container.l_cat_en2 -column 2 -row 1 -sticky w
 grid .container.l_pos_dsct2 -column 2 -row 7 -sticky w
+grid .container.l_pos_fact2 -column 2 -row 8 -sticky w
 grid .container.l_tckt_en2 -column 2 -row 9 -sticky e
 #entries and buttons
 grid .container.c_cat_en -column 1 -row 1 -sticky w 
@@ -107,10 +134,11 @@ grid .container.e_db_name -column 1 -row 4 -sticky w -columnspan 2
 grid .container.e_pos_usr -column 1 -row 5 -sticky w -columnspan 2
 grid .container.e_pos_pass -column 1 -row 6 -sticky w -columnspan 2
 grid .container.c_pos_dsct -column 1 -row 7 -sticky w 
-grid .container.co_pos_tckt -column 1 -row 8 -sticky w -columnspan 2
-grid .container.c_tckt_en -column 1 -row 9 -sticky w
-grid .container.e_tckt_num -column 1 -row 10 -sticky w -columnspan 2
-grid .container.b_load_db -column 1 -row 11 -columnspan 2 -sticky wens
+grid .container.c_pos_fact -column 1 -row 8 -sticky w 
+grid .container.co_pos_tckt -column 1 -row 9 -sticky w -columnspan 2
+grid .container.c_tckt_en -column 1 -row 10 -sticky w
+grid .container.e_tckt_num -column 1 -row 11 -sticky w -columnspan 2
+grid .container.b_load_db -column 1 -row 12 -columnspan 2 -sticky wens
 
 #Disable file entry
 .container.e_db_file state disabled
@@ -607,20 +635,31 @@ proc changeTicket {} {
   global pos_pass
   global tickets
   global wd
+  global invoice_text
+  writeLog2 "Imprimir leyenda de factura $invoice"
+  if { $invoice == "Deshabilitado" } {
+    set invoice_text ""
+  }
   writeLog2 "Tickets a imprimir $tickets"
   if { $tickets == 3 } {
     writeLog2 "Cambiando tickets a 3"
     #Reading Printer.Ticket.3 to memory
     set fp [open "$wd/resources/Printer.Ticket.3" r]
-    fconfigure $fp -encoding utf-8
-    set file_data [read $fp]
-    close $fp
-    #Replacing data
-    regsub -all {{POS_USR}} $file_data $pos_usr file_data
-    regsub -all {{POS_PASS}} $file_data $pos_pass file_data
-    #Editing existing Printer.Ticket
-    execDB "UPDATE RESOURCES SET CONTENT='$file_data' WHERE NAME='Printer.Ticket'"
+  } else {
+    writeLog2 "2 Tickets solamente"
+    set fp [open "$wd/resources/Printer.Ticket.2" r]
   }
+  fconfigure $fp -encoding utf-8
+  set file_data [read $fp]
+  close $fp
+  #Replacing data
+  regsub -all {{INVOICE}} $file_data $invoice_text file_data
+  if { $invoice == "Habilitado" } {
+     regsub -all {{POS_USR}} $file_data $pos_usr file_data
+     regsub -all {{POS_PASS}} $file_data $pos_pass file_data
+  }
+  #Editing existing Printer.Ticket
+  execDB "UPDATE RESOURCES SET CONTENT='$file_data' WHERE NAME='Printer.Ticket'"
 }
 
 proc ticketNumber {} {
