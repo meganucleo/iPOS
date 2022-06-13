@@ -171,9 +171,11 @@ function install {
 function installShortcut {
   short=${1} 
   pdebug "Installing shortcut ${short}"
+  [ ! -d "/home/${END_USER}/Escritorio" ] && mkdir -p /home/${END_USER}/Escritorio && chown ${END_USER}.${END_USER} -R /home/${END_USER}/Escritorio
   [ -d "/home/${END_USER}/Escritorio" ] && /bin/cp -f shortcuts/${short} /home/${END_USER}/Escritorio 
   [ -f "/home/${END_USER}/Escritorio/${short}" ] && chmod 755 /home/${END_USER}/Escritorio/${short} && chown ${END_USER}.${END_USER} /home/${END_USER}/Escritorio/${short}
   # English support
+  [ ! -d "/home/${END_USER}/Desktop" ] && mkdir -p /home/${END_USER}/Desktop && chown ${END_USER}.${END_USER} -R /home/${END_USER}/Desktop
   [ -d "/home/${END_USER}/Desktop" ] && /bin/cp -f shortcuts/${short} /home/${END_USER}/Desktop 
   [ -f "/home/${END_USER}/Desktop/${short}" ] && chmod 755 /home/${END_USER}/Desktop/${short} && chown ${END_USER}.${END_USER} /home/${END_USER}/Desktop/${short}
 }
