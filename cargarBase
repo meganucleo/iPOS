@@ -636,6 +636,7 @@ proc changeTicket {} {
   global tickets
   global wd
   global invoice_text
+  global invoice
   writeLog2 "Imprimir leyenda de factura $invoice"
   if { $invoice == "Deshabilitado" } {
     set invoice_text ""
