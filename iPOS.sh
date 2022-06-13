@@ -76,7 +76,10 @@ function warning {
 function update {
   $APT update -y
   sleep 5
-  $APT install -y vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl python-mysqldb rdesktop hplip-gui hpijs-ppds hplip phpmyadmin libcups2-dev libcupsimage2-dev python-xlsxwriter -y
+  $APT install -y vim openssh-server aptitude git libmysql-java mysql-server default-jre tcllib mysqltcl python-mysqldb rdesktop hplip-gui hpijs-ppds hplip phpmyadmin libcups2-dev libcupsimage2-dev
+  sleep 5     
+  #Puse su propia seccion de instalacion
+  $APT install -y python-xlsxwriter python3-xlsxwriter
   sleep 5
   $APT remove -y abiword gnumeric 
 }
