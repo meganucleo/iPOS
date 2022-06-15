@@ -660,11 +660,7 @@ proc changeTicket {} {
   global invoice
   writeLog2 "Imprimir leyenda de factura $invoice"
   if { $invoice == "Deshabilitado" } {
-    set invoice_text "
-<line>
-<text align=\"center\" length=\"42\">NO HAY CAMBIOS NI DEVOLUCIONES</text>
-</line>
-"
+    set invoice_text ""
   }
   writeLog2 "Tickets a imprimir $tickets"
   if { $tickets == 3 } {
@@ -684,6 +680,7 @@ proc changeTicket {} {
   #regsub -all {{POS_PASS}} $file_data $pos_pass file_data
   #Editing existing Printer.Ticket
   execDB "UPDATE RESOURCES SET CONTENT='$file_data' WHERE NAME='Printer.Ticket'"
+  execDB "UPDATE RESOURCES SET CONTENT='$file_data' WHERE NAME='Printer.TicketPreview'"
 }
 
 proc ticketNumber {} {
