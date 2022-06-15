@@ -36,24 +36,45 @@ array set csv {}
 array set catCsv {}
 
 #Informacion de facturacion
-set invoice_text "<line>
+set invoice_text "
+<image>Printer.Ticket.Logo</image>
+<line></line>
+<line>
+<text align=\"center\" length=\"42\">Editorial Delti S.A. de C.V.</text>
+</line>
+<line>
+<text align=\"center\" length=\"42\">Av Prolongación San Antonio #170 P 1</text>
+</line>
+<line>
+<text align=\"center\" length=\"42\">Col. Carola México DF CP 01180</text>
+</line>
+<line>
+<text align=\"center\" length=\"42\">RFC EDE 890908 640</text>
+</line>
+<line>
+<text align=\"center\" length=\"42\">Contactanos www.delti.com.mx</text>
+</line>
+<line>
 <text align=\"center\" length=\"42\">Si deseas factura ingresa tus datos en:</text>
 </line>
 <line>
 <text align=\"center\" length=\"42\">https://ventasdirectas.delti.com.mx</text>
 </line>
 <line>
-<text align=\"center\" length=\"42\">Usuario: {POS_USR}</text>
-</line>
-<line>
-<text align=\"center\" length=\"42\">Contraseña: {POS_PASS}</text> 
-</line>
-<line>
 <text align=\"center\" length=\"42\">Después de la fecha de compra solo tienes</text> 
 </line>
 <line>
 <text align=\"center\" length=\"42\">cinco días para solicitar tu factura</text> 
-</line>"
+</line>
+<line>
+<text align=\"center\" length=\"42\">NO HAY CAMBIOS NI DEVOLUCIONES</text>
+</line>
+<line>
+<text align=\"center\" length=\"42\">Usuario: {POS_USR}</text>
+</line>
+"
+
+
 
 #Window and container properties
 wm title . "Configurador de punto de Venta"
@@ -639,7 +660,11 @@ proc changeTicket {} {
   global invoice
   writeLog2 "Imprimir leyenda de factura $invoice"
   if { $invoice == "Deshabilitado" } {
-    set invoice_text ""
+    set invoice_text "
+<line>
+<text align=\"center\" length=\"42\">NO HAY CAMBIOS NI DEVOLUCIONES</text>
+</line>
+"
   }
   writeLog2 "Tickets a imprimir $tickets"
   if { $tickets == 3 } {
@@ -655,10 +680,8 @@ proc changeTicket {} {
   close $fp
   #Replacing data
   regsub -all {{INVOICE}} $file_data $invoice_text file_data
-  if { $invoice == "Habilitado" } {
-     regsub -all {{POS_USR}} $file_data $pos_usr file_data
-     regsub -all {{POS_PASS}} $file_data $pos_pass file_data
-  }
+  regsub -all {{POS_USR}} $file_data $pos_usr file_data
+  #regsub -all {{POS_PASS}} $file_data $pos_pass file_data
   #Editing existing Printer.Ticket
   execDB "UPDATE RESOURCES SET CONTENT='$file_data' WHERE NAME='Printer.Ticket'"
 }
