@@ -316,6 +316,7 @@ proc process {} {
   loadProducts
   buttonDisccount
   changeTicket
+  changeTicketPreview
   ticketNumber
   changeProperties
   writeLog2 "CARGA TERMINADA EXITOSAMENTE"
@@ -680,8 +681,33 @@ proc changeTicket {} {
   #regsub -all {{POS_PASS}} $file_data $pos_pass file_data
   #Editing existing Printer.Ticket
   execDB "UPDATE RESOURCES SET CONTENT='$file_data' WHERE NAME='Printer.Ticket'"
+}
+
+proc changeTicketPreview {} {
+  global pos_usr
+  global pos_pass
+  global tickets
+  global wd
+  global invoice_text
+  global invoice
+  writeLog2 "Imprimir leyenda de factura $invoice"
+  if { $invoice == "Deshabilitado" } {
+    set invoice_text ""
+  }
+  writeLog2 "Printer.TicketPreview"
+  set fp [open "$wd/resources/Printer.Ticket.3" r]
+  fconfigure $fp -encoding utf-8
+  set file_data [read $fp]
+  close $fp
+  #Replacing data
+  regsub -all {{INVOICE}} $file_data $invoice_text file_data
+  regsub -all {{POS_USR}} $file_data $pos_usr file_data
+  #regsub -all {{POS_PASS}} $file_data $pos_pass file_data
+  #Editing existing Printer.Ticket
   execDB "UPDATE RESOURCES SET CONTENT='$file_data' WHERE NAME='Printer.TicketPreview'"
 }
+
+
 
 proc ticketNumber {} {
   global ticket_number_en
