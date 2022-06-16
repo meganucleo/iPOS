@@ -44,21 +44,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text align="left" length="15">Fecha:</text>
 <text>${ticket.printDate()}</text>
 </line>
-#CLIENTE POS DELTI
-<line>
-<text align="left" length="15">Cliente:</text>
-<text>{POS_USR}</text>
-</line>
-#if ($ticket.getCustomer())
-<line>
-<text align="left" length="15">Cliente:</text>
-<text>${ticket.getCustomer().printName()}</text>
-</line> 
-<line>
-<text align="left" length="15"></text>
-<text>${ticket.getCustomer().printTaxid()}</text>
-</line> 
-#end
+{CUSTOMER}
 #if ($place != "")
 <line>
 <text align="left" length="15">Table:</text>
@@ -240,10 +226,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 #end 
 #end 
 <line></line>
-<line>
-<text align="left" length="15">Cajero:</text>
-<text>${ticket.printUser()}</text>
-</line> 
+{CASHIER}
 <line></line> 
 <line>
 <text align="center" length="42">Pago en una sola exhibición</text>
