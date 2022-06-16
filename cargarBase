@@ -705,48 +705,48 @@ proc changeTicket {} {
   set file_data [read $fp]
   close $fp
   #Replacing data
-  regsub -all {{INVOICE}} $file_data $invoice_text file_data
-  regsub -all {{CUSTOMER}} $file_data $customer_text file_data
-  regsub -all {{CASHIER}} $file_data $cashier_text file_data
-  regsub -all {{POS_USR}} $file_data $pos_usr file_data
+  #regsub -all {{INVOICE}} $file_data $invoice_text file_data
+  #regsub -all {{CUSTOMER}} $file_data $customer_text file_data
+  #regsub -all {{CASHIER}} $file_data $cashier_text file_data
+  #regsub -all {{POS_USR}} $file_data $pos_usr file_data
   #regsub -all {{POS_PASS}} $file_data $pos_pass file_data
   #Editing existing Printer.Ticket
   execDB "UPDATE RESOURCES SET CONTENT='$file_data' WHERE NAME='Printer.Ticket'"
 }
 
-proc changeTicketPreview {} {
-  global pos_usr
-  global pos_pass
-  global tickets
-  global wd
-  global invoice_text
-  global invoice
-  global customer_text
-  global cashier_text
-  writeLog2 "Imprimir leyenda de factura $invoice"
-  if { $invoice == "Deshabilitado" } {
-    set invoice_temp ""
-    set customer_temp ""
-    set cashier_temp ""
-  } else {
-    set invoice_temp invoice_text
-    set customer_temp customer_text
-    set cashier_temp cashier_text
-  }
-  writeLog2 "Printer.TicketPreview"
-  set fp [open "$wd/resources/Printer.TicketPreview" r]
-  fconfigure $fp -encoding utf-8
-  set file_data [read $fp]
-  close $fp
-  #Replacing data
-  #regsub -all {{INVOICE}} $file_data $invoice_temp file_data
-  #regsub -all {{CUSTOMER}} $file_data $customer_temp file_data
-  #regsub -all {{CASHIER}} $file_data $cashier_temp file_data
-  #regsub -all {{POS_USR}} $file_data $pos_usr file_data
-  #regsub -all {{POS_PASS}} $file_data $pos_pass file_data
-  #Editing existing Printer.Ticket
-  execDB "UPDATE RESOURCES SET CONTENT='$file_data' WHERE NAME='Printer.TicketPreview'"
-}
+#proc changeTicketPreview {} {
+#  global pos_usr
+#  global pos_pass
+#  global tickets
+#  global wd
+#  global invoice_text
+#  global invoice
+#  global customer_text
+#  global cashier_text
+#  writeLog2 "Imprimir leyenda de factura $invoice"
+#  if { $invoice == "Deshabilitado" } {
+#    set invoice_temp ""
+#    set customer_temp ""
+#    set cashier_temp ""
+#  } else {
+#    set invoice_temp invoice_text
+#    set customer_temp customer_text
+#    set cashier_temp cashier_text
+#  }
+#  writeLog2 "Printer.TicketPreview"
+#  set fp [open "$wd/resources/Printer.TicketPreview" r]
+#  fconfigure $fp -encoding utf-8
+#  set file_data [read $fp]
+#  close $fp
+#  #Replacing data
+#  #regsub -all {{INVOICE}} $file_data $invoice_temp file_data
+#  #regsub -all {{CUSTOMER}} $file_data $customer_temp file_data
+#  #regsub -all {{CASHIER}} $file_data $cashier_temp file_data
+#  #regsub -all {{POS_USR}} $file_data $pos_usr file_data
+#  #regsub -all {{POS_PASS}} $file_data $pos_pass file_data
+#  #Editing existing Printer.Ticket
+#  execDB "UPDATE RESOURCES SET CONTENT='$file_data' WHERE NAME='Printer.TicketPreview'"
+#}
 
 
 
