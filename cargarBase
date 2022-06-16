@@ -340,7 +340,7 @@ proc process {} {
   loadProducts
   buttonDisccount
   changeTicket
-  #changeTicketPreview
+  changeTicketPreview
   ticketNumber
   changeProperties
   writeLog2 "CARGA TERMINADA EXITOSAMENTE"
