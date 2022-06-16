@@ -688,6 +688,8 @@ proc changeTicket {} {
   writeLog2 "Imprimir leyenda de factura $invoice"
   if { $invoice == "Deshabilitado" } {
     set invoice_text ""
+    set customer_text ""
+    set cashier_text ""
   }
   writeLog2 "Tickets a imprimir $tickets"
   if { $tickets == 3 } {
@@ -723,6 +725,8 @@ proc changeTicketPreview {} {
   writeLog2 "Imprimir leyenda de factura $invoice"
   if { $invoice == "Deshabilitado" } {
     set invoice_text ""
+    set customer_text ""
+    set cashier_text ""
   }
   writeLog2 "Printer.TicketPreview"
   set fp [open "$wd/resources/Printer.TicketPreview" r]
