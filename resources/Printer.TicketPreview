@@ -112,6 +112,12 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text align ="left" length="16" bold="true">Total.</text>
 <text align ="right" length="20" bold="true">${ticket.printTotal()}</text>
 </line> 
+<line>
+<text align="left" length="49">${ticket.getLine(0).getProperty("importe")}</text>
+</line>
+<line>
+<text align="left" length="49">${ticket.getLine(0).getProperty("importe2")}</text>
+</line>
 #foreach ($paymentline in $ticket.payments) 
 #if ($paymentline.name == "cash")
 <line></line> 
