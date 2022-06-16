@@ -53,10 +53,10 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 #end
 <line></line> 
 <line>
-<text align ="left" length="17">Art</text>
-<text align ="right" length="10">Precio</text>
-<text align ="right" length="5"></text>
-<text align ="right" length="10">Total</text>
+<text align="left" length="17">Art</text>
+<text align="right" length="10">Precio</text>
+<text align="right" length="5"></text>
+<text align="right" length="10">Total</text>
 </line> 
 <line>
 <text>------------------------------------------</text>
@@ -64,20 +64,20 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 #foreach ($ticketline in $ticket.getLines())
 <line>
 #if ($ticketline.isProductCom()) 
-<text align ="left" length="20">${ticketline.getProductName()}</text>
+<text align="left" length="20">${ticketline.getProductName()}</text>
 #else
-<text align ="left" length="17">${ticketline.getProductName()}</text>
+<text align="left" length="17">${ticketline.getProductName()}</text>
 #end
-<text align ="right" length="10">${ticketline.printPrice()}</text>
-<text align ="right" length="5">x${ticketline.printMultiply()}</text>
-<text align ="right" length="10">${ticketline.printSubValue()}</text>
+<text align="right" length="10">${ticketline.printPrice()}</text>
+<text align="right" length="5">x${ticketline.printMultiply()}</text>
+<text align="right" length="10">${ticketline.printSubValue()}</text>
 </line> 
 <line>
-<text align ="left" length="13">${ticketline.getProductReference()}</text>
+<text align="left" length="13">${ticketline.getProductReference()}</text>
 </line> 
 #if ($ticketline.productAttSetInstId)
 <line>
-<text align ="left" length="42"> ${ticketline.productAttSetInstDesc}</text>
+<text align="left" length="42"> ${ticketline.productAttSetInstDesc}</text>
 </line>
 #end
 #end
@@ -86,31 +86,31 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 </line> 
 <line>
 <text>Total de Unidades: </text>
-<text align ="right" length="10">${ticket.printArticlesCount()}</text>
+<text align="right" length="10">${ticket.printArticlesCount()}</text>
 </line> 
 <line></line> 
 #foreach ($taxinfo in $taxes) 
 #set( $taxline = $ticket.getTaxLine($taxinfo))
 <line> 
-<text align ="left" length="18">${taxline.getTaxInfo()}</text> 
-<text align ="right" length="12">${taxline.printSubTotal()}</text> 
-<text align ="right" length="12">${taxline.printTax()}</text> 
+<text align="left" length="18">${taxline.getTaxInfo()}</text> 
+<text align="right" length="12">${taxline.printSubTotal()}</text> 
+<text align="right" length="12">${taxline.printTax()}</text> 
 </line> 
 #end 
 <line> </line> 
 <line>
-<text align ="left" length="16">Subtotal.</text>
-<text align ="right" length="20">${ticket.printSubTotal()}</text>
+<text align="left" length="16">Subtotal.</text>
+<text align="right" length="20">${ticket.printSubTotal()}</text>
 </line> 
 <line>
-<text align ="left" length="16">Impuestos.</text>
-<text align ="right" length="20">${ticket.printTax()}</text>
+<text align="left" length="16">Impuestos.</text>
+<text align="right" length="20">${ticket.printTax()}</text>
 </line> 
 <line></line> 
 <line></line> 
 <line size="1">
-<text align ="left" length="16" bold="true">Total.</text>
-<text align ="right" length="20" bold="true">${ticket.printTotal()}</text>
+<text align="left" length="16" bold="true">Total.</text>
+<text align="right" length="20" bold="true">${ticket.printTotal()}</text>
 </line> 
 <line>
 <text align="left" length="49">${ticket.getLine(0).getProperty("importe")}</text>
@@ -126,11 +126,11 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 </line> 
 <line>
 <text align="left" length="22">Recibido:</text>
-<text align ="right" length="20">${paymentline.printPaid()}</text>
+<text align="right" length="20">${paymentline.printPaid()}</text>
 </line> 
 <line>
 <text align="left" length="22">Cambio:</text>
-<text align ="right" length="20">${paymentline.printChange()}</text>
+<text align="right" length="20">${paymentline.printChange()}</text>
 </line> 
 #end
 #if ($paymentline.name == "cashrefund")
@@ -139,7 +139,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Devolucion</text>
 </line>
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "magcard")
@@ -148,22 +148,22 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Tarjeta</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 <line>
-<text align ="left" length="22">Numero:</text>
+<text align="left" length="22">Numero:</text>
 <text>${paymentline.printCardNumber()}</text>
 </line>
 <line>
-<text align ="left" length="22">Fecha de expiracion:</text>
+<text align="left" length="22">Fecha de expiracion:</text>
 <text>${paymentline.printExpirationDate()}</text>
 </line>
 <line>
-<text align ="left" length="22">Transaccion:</text>
+<text align="left" length="22">Transaccion:</text>
 <text>${paymentline.printTransactionID()}</text>
 </line>
 <line>
-<text align ="left" length="22">Autorizacion:</text>
+<text align="left" length="22">Autorizacion:</text>
 <text>${paymentline.printAuthorization()}</text>
 </line>
 #end 
@@ -173,7 +173,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Devolucion tarjeta</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "cheque")
@@ -182,7 +182,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Cheque</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "chequerefund")
@@ -191,7 +191,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Cheque refund</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "paperin")
@@ -200,7 +200,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Note</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "paperout")
@@ -209,7 +209,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Note Refund</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "free")
@@ -218,7 +218,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Free</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "debt")
@@ -227,7 +227,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Debt</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end 
 #end 
@@ -285,10 +285,10 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 #end
 <line></line> 
 <line>
-<text align ="left" length="17">Art</text>
-<text align ="right" length="10">Precio</text>
-<text align ="right" length="5"></text>
-<text align ="right" length="10">Total</text>
+<text align="left" length="17">Art</text>
+<text align="right" length="10">Precio</text>
+<text align="right" length="5"></text>
+<text align="right" length="10">Total</text>
 </line> 
 <line>
 <text>------------------------------------------</text>
@@ -296,20 +296,20 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 #foreach ($ticketline in $ticket.getLines())
 <line>
 #if ($ticketline.isProductCom()) 
-<text align ="left" length="20">${ticketline.getProductName()}</text>
+<text align="left" length="20">${ticketline.getProductName()}</text>
 #else
-<text align ="left" length="17">${ticketline.getProductName()}</text>
+<text align="left" length="17">${ticketline.getProductName()}</text>
 #end
-<text align ="right" length="10">${ticketline.printPrice()}</text>
-<text align ="right" length="5">x${ticketline.printMultiply()}</text>
-<text align ="right" length="10">${ticketline.printSubValue()}</text>
+<text align="right" length="10">${ticketline.printPrice()}</text>
+<text align="right" length="5">x${ticketline.printMultiply()}</text>
+<text align="right" length="10">${ticketline.printSubValue()}</text>
 </line> 
 <line>
-<text align ="left" length="13">${ticketline.getProductReference()}</text>
+<text align="left" length="13">${ticketline.getProductReference()}</text>
 </line> 
 #if ($ticketline.productAttSetInstId)
 <line>
-<text align ="left" length="42"> ${ticketline.productAttSetInstDesc}</text>
+<text align="left" length="42"> ${ticketline.productAttSetInstDesc}</text>
 </line>
 #end
 #end
@@ -318,31 +318,31 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 </line> 
 <line>
 <text>Total de Unidades: </text>
-<text align ="right" length="10">${ticket.printArticlesCount()}</text>
+<text align="right" length="10">${ticket.printArticlesCount()}</text>
 </line> 
 <line></line> 
 #foreach ($taxinfo in $taxes) 
 #set( $taxline = $ticket.getTaxLine($taxinfo))
 <line> 
-<text align ="left" length="18">${taxline.getTaxInfo()}</text> 
-<text align ="right" length="12">${taxline.printSubTotal()}</text> 
-<text align ="right" length="12">${taxline.printTax()}</text> 
+<text align="left" length="18">${taxline.getTaxInfo()}</text> 
+<text align="right" length="12">${taxline.printSubTotal()}</text> 
+<text align="right" length="12">${taxline.printTax()}</text> 
 </line> 
 #end 
 <line> </line> 
 <line>
-<text align ="left" length="16">Subtotal.</text>
-<text align ="right" length="20">${ticket.printSubTotal()}</text>
+<text align="left" length="16">Subtotal.</text>
+<text align="right" length="20">${ticket.printSubTotal()}</text>
 </line> 
 <line>
-<text align ="left" length="16">Impuestos.</text>
-<text align ="right" length="20">${ticket.printTax()}</text>
+<text align="left" length="16">Impuestos.</text>
+<text align="right" length="20">${ticket.printTax()}</text>
 </line> 
 <line></line> 
 <line></line> 
 <line size="1">
-<text align ="left" length="16" bold="true">Total.</text>
-<text align ="right" length="20" bold="true">${ticket.printTotal()}</text>
+<text align="left" length="16" bold="true">Total.</text>
+<text align="right" length="20" bold="true">${ticket.printTotal()}</text>
 </line> 
 <line>
 <text align="left" length="49">${ticket.getLine(0).getProperty("importe")}</text>
@@ -358,11 +358,11 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 </line> 
 <line>
 <text align="left" length="22">Recibido:</text>
-<text align ="right" length="20">${paymentline.printPaid()}</text>
+<text align="right" length="20">${paymentline.printPaid()}</text>
 </line> 
 <line>
 <text align="left" length="22">Cambio:</text>
-<text align ="right" length="20">${paymentline.printChange()}</text>
+<text align="right" length="20">${paymentline.printChange()}</text>
 </line> 
 #end
 #if ($paymentline.name == "cashrefund")
@@ -371,7 +371,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Devolucion</text>
 </line>
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "magcard")
@@ -380,22 +380,22 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Tarjeta</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 <line>
-<text align ="left" length="22">Numero:</text>
+<text align="left" length="22">Numero:</text>
 <text>${paymentline.printCardNumber()}</text>
 </line>
 <line>
-<text align ="left" length="22">Fecha de expiracion:</text>
+<text align="left" length="22">Fecha de expiracion:</text>
 <text>${paymentline.printExpirationDate()}</text>
 </line>
 <line>
-<text align ="left" length="22">Transaccion:</text>
+<text align="left" length="22">Transaccion:</text>
 <text>${paymentline.printTransactionID()}</text>
 </line>
 <line>
-<text align ="left" length="22">Autorizacion:</text>
+<text align="left" length="22">Autorizacion:</text>
 <text>${paymentline.printAuthorization()}</text>
 </line>
 #end 
@@ -405,7 +405,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Devolucion tarjeta</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "cheque")
@@ -414,7 +414,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Cheque</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "chequerefund")
@@ -423,7 +423,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Cheque refund</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "paperin")
@@ -432,7 +432,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Note</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "paperout")
@@ -441,7 +441,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Note Refund</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "free")
@@ -450,7 +450,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Free</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "debt")
@@ -459,7 +459,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Debt</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end 
 #end 
@@ -517,10 +517,10 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 #end
 <line></line> 
 <line>
-<text align ="left" length="17">Art</text>
-<text align ="right" length="10">Precio</text>
-<text align ="right" length="5"></text>
-<text align ="right" length="10">Total</text>
+<text align="left" length="17">Art</text>
+<text align="right" length="10">Precio</text>
+<text align="right" length="5"></text>
+<text align="right" length="10">Total</text>
 </line> 
 <line>
 <text>------------------------------------------</text>
@@ -528,20 +528,20 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 #foreach ($ticketline in $ticket.getLines())
 <line>
 #if ($ticketline.isProductCom()) 
-<text align ="left" length="20">${ticketline.getProductName()}</text>
+<text align="left" length="20">${ticketline.getProductName()}</text>
 #else
-<text align ="left" length="17">${ticketline.getProductName()}</text>
+<text align="left" length="17">${ticketline.getProductName()}</text>
 #end
-<text align ="right" length="10">${ticketline.printPrice()}</text>
-<text align ="right" length="5">x${ticketline.printMultiply()}</text>
-<text align ="right" length="10">${ticketline.printSubValue()}</text>
+<text align="right" length="10">${ticketline.printPrice()}</text>
+<text align="right" length="5">x${ticketline.printMultiply()}</text>
+<text align="right" length="10">${ticketline.printSubValue()}</text>
 </line> 
 <line>
-<text align ="left" length="13">${ticketline.getProductReference()}</text>
+<text align="left" length="13">${ticketline.getProductReference()}</text>
 </line> 
 #if ($ticketline.productAttSetInstId)
 <line>
-<text align ="left" length="42"> ${ticketline.productAttSetInstDesc}</text>
+<text align="left" length="42"> ${ticketline.productAttSetInstDesc}</text>
 </line>
 #end
 #end
@@ -550,30 +550,30 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 </line> 
 <line>
 <text>Total de Unidades: </text>
-<text align ="right" length="10">${ticket.printArticlesCount()}</text>
+<text align="right" length="10">${ticket.printArticlesCount()}</text>
 </line> 
 <line></line> 
 #foreach ($taxinfo in $taxes) 
 #set( $taxline = $ticket.getTaxLine($taxinfo))
 <line> 
-<text align ="left" length="18">${taxline.getTaxInfo()}</text> 
-<text align ="right" length="12">${taxline.printSubTotal()}</text> 
-<text align ="right" length="12">${taxline.printTax()}</text> 
+<text align="left" length="18">${taxline.getTaxInfo()}</text> 
+<text align="right" length="12">${taxline.printSubTotal()}</text> 
+<text align="right" length="12">${taxline.printTax()}</text> 
 </line> 
 #end 
 <line> </line> 
 <line>
-<text align ="left" length="16">Subtotal.</text>
-<text align ="right" length="20">${ticket.printSubTotal()}</text>
+<text align="left" length="16">Subtotal.</text>
+<text align="right" length="20">${ticket.printSubTotal()}</text>
 </line> 
 <line>
-<text align ="left" length="16">Impuestos.</text>
-<text align ="right" length="20">${ticket.printTax()}</text>
+<text align="left" length="16">Impuestos.</text>
+<text align="right" length="20">${ticket.printTax()}</text>
 </line> 
 <line></line> 
 <line size="1">
-<text align ="left" length="16" bold="true">Total.</text>
-<text align ="right" length="20" bold="true">${ticket.printTotal()}</text>
+<text align="left" length="16" bold="true">Total.</text>
+<text align="right" length="20" bold="true">${ticket.printTotal()}</text>
 </line> 
 <line>
 <text align="left" length="49">${ticket.getLine(0).getProperty("importe")}</text>
@@ -589,11 +589,11 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 </line> 
 <line>
 <text align="left" length="22">Recibido:</text>
-<text align ="right" length="20">${paymentline.printPaid()}</text>
+<text align="right" length="20">${paymentline.printPaid()}</text>
 </line> 
 <line>
 <text align="left" length="22">Cambio:</text>
-<text align ="right" length="20">${paymentline.printChange()}</text>
+<text align="right" length="20">${paymentline.printChange()}</text>
 </line> 
 #end
 #if ($paymentline.name == "cashrefund")
@@ -602,7 +602,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Devolucion</text>
 </line>
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "magcard")
@@ -611,22 +611,22 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Tarjeta</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 <line>
-<text align ="left" length="22">Numero:</text>
+<text align="left" length="22">Numero:</text>
 <text>${paymentline.printCardNumber()}</text>
 </line>
 <line>
-<text align ="left" length="22">Fecha de expiracion:</text>
+<text align="left" length="22">Fecha de expiracion:</text>
 <text>${paymentline.printExpirationDate()}</text>
 </line>
 <line>
-<text align ="left" length="22">Transaccion:</text>
+<text align="left" length="22">Transaccion:</text>
 <text>${paymentline.printTransactionID()}</text>
 </line>
 <line>
-<text align ="left" length="22">Autorizacion:</text>
+<text align="left" length="22">Autorizacion:</text>
 <text>${paymentline.printAuthorization()}</text>
 </line>
 #end 
@@ -636,7 +636,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Devolucion tarjeta</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "cheque")
@@ -645,7 +645,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Cheque</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "chequerefund")
@@ -654,7 +654,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Cheque refund</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "paperin")
@@ -663,7 +663,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Note</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "paperout")
@@ -672,7 +672,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Note Refund</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "free")
@@ -681,7 +681,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Free</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end
 #if ($paymentline.name == "debt")
@@ -690,7 +690,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text bold="true">Debt</text>
 </line> 
 <line>
-<text align ="right" length="42">${paymentline.printTotal()}</text>
+<text align="right" length="42">${paymentline.printTotal()}</text>
 </line> 
 #end 
 #end 
