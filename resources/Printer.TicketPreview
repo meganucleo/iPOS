@@ -28,7 +28,7 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <ticket>
 {INVOICE}
 <line>
-  <text align="center" length="20">REIMPRESION</text>
+  <text align="center" length="42">REIMPRESION</text>
 </line>
 <line></line>
 #if (${ticket.ticketType} == 0)
@@ -115,12 +115,6 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
   <text align="left" length="16" bold="true">Total.</text>
   <text align="right" length="20" bold="true">${ticket.printTotal()}</text>
 </line> 
-<line>
-  <text align="left" length="49">${ticket.getLine(0).getProperty("importe")}</text>
-</line>
-<line>
-  <text align="left" length="49">${ticket.getLine(0).getProperty("importe2")}</text>
-</line>
 #foreach ($paymentline in $ticket.payments) 
   #if ($paymentline.name == "cash")
     <line></line> 
@@ -130,10 +124,6 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
     <line>
       <text align="left" length="22">Recibido:</text>
       <text align="right" length="20">${paymentline.printPaid()}</text>
-    </line> 
-    <line>
-      <text align="left" length="22">Cambio:</text>
-      <text align="right" length="20">${paymentline.printChange()}</text>
     </line> 
   #end
   #if ($paymentline.name == "cashrefund")
