@@ -81,14 +81,14 @@ set customer_text "
 <text align=\"left\" length=\"15\">Cliente:</text>
 <text>{POS_USR}</text>
 </line>
-#if ($ticket.getCustomer())
+#if (\$ticket.getCustomer())
 <line>
 <text align=\"left\" length=\"15\">Cliente:</text>
-<text>${ticket.getCustomer().printName()}</text>
+<text>\${ticket.getCustomer().printName()}</text>
 </line> 
 <line>
 <text align=\"left\" length=\"15\"></text>
-<text>${ticket.getCustomer().printTaxid()}</text>
+<text>\${ticket.getCustomer().printTaxid()}</text>
 </line> 
 #end
 "
@@ -96,7 +96,7 @@ set customer_text "
 set cashier_text "
 <line>
 <text align=\"left\" length=\"15\">Cajero:</text>
-<text>${ticket.printUser()}</text>
+<text>\${ticket.printUser()}</text>
 </line> 
 "
 
