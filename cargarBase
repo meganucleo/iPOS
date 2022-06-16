@@ -734,9 +734,9 @@ proc changeTicketPreview {} {
   set file_data [read $fp]
   close $fp
   #Replacing data
-  regsub -all {{INVOICE}} $file_data $invoice_temp file_data
-  regsub -all {{CUSTOMER}} $file_data $customer_temp file_data
-  regsub -all {{CASHIER}} $file_data $cashier_temp file_data
+  regsub -all {{INVOICE}} $file_data $invoice_text file_data
+  regsub -all {{CUSTOMER}} $file_data $customer_text file_data
+  regsub -all {{CASHIER}} $file_data $cashier_text file_data
   regsub -all {{POS_USR}} $file_data $pos_usr file_data
   #regsub -all {{POS_PASS}} $file_data $pos_pass file_data
   #Editing existing Printer.Ticket
