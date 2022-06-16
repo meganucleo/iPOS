@@ -76,12 +76,11 @@ set invoice_text "
 
 set customer_text "
 </line>
-#CLIENTE POS DELTI
 <line>
 <text align=\"left\" length=\"15\">Cliente:</text>
 <text>{POS_USR}</text>
 </line>
-#if (\$ticket.getCustomer())
+\#if (\$ticket.getCustomer())
 <line>
 <text align=\"left\" length=\"15\">Cliente:</text>
 <text>\${ticket.getCustomer().printName()}</text>
@@ -90,8 +89,9 @@ set customer_text "
 <text align=\"left\" length=\"15\"></text>
 <text>\${ticket.getCustomer().printTaxid()}</text>
 </line> 
-#end
+\#end
 "
+
 
 set cashier_text "
 <line>
