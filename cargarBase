@@ -74,6 +74,30 @@ set invoice_text "
 </line>
 "
 
+set customer_text "
+</line>
+#CLIENTE POS DELTI
+<line>
+<text align=\"left\" length=\"15\">Cliente:</text>
+<text>{POS_USR}</text>
+</line>
+#if ($ticket.getCustomer())
+<line>
+<text align=\"left\" length=\"15\">Cliente:</text>
+<text>${ticket.getCustomer().printName()}</text>
+</line> 
+<line>
+<text align=\"left\" length=\"15\"></text>
+<text>${ticket.getCustomer().printTaxid()}</text>
+</line> 
+#end"
+
+set cashier_text "
+<line>
+<text align=\"left\" length=\"15\">Cajero:</text>
+<text>${ticket.printUser()}</text>
+</line> 
+"
 
 
 #Window and container properties
@@ -659,6 +683,8 @@ proc changeTicket {} {
   global wd
   global invoice_text
   global invoice
+  global customer_text
+  global cashier_text
   writeLog2 "Imprimir leyenda de factura $invoice"
   if { $invoice == "Deshabilitado" } {
     set invoice_text ""
@@ -677,6 +703,8 @@ proc changeTicket {} {
   close $fp
   #Replacing data
   regsub -all {{INVOICE}} $file_data $invoice_text file_data
+  regsub -all {{CUSTOMER}} $file_data $invoice_text file_data
+  regsub -all {{CASHIER}} $file_data $invoice_text file_data
   regsub -all {{POS_USR}} $file_data $pos_usr file_data
   #regsub -all {{POS_PASS}} $file_data $pos_pass file_data
   #Editing existing Printer.Ticket
@@ -690,6 +718,8 @@ proc changeTicketPreview {} {
   global wd
   global invoice_text
   global invoice
+  global customer_text
+  global cashier_text
   writeLog2 "Imprimir leyenda de factura $invoice"
   if { $invoice == "Deshabilitado" } {
     set invoice_text ""
@@ -701,6 +731,8 @@ proc changeTicketPreview {} {
   close $fp
   #Replacing data
   regsub -all {{INVOICE}} $file_data $invoice_text file_data
+  regsub -all {{CUSTOMER}} $file_data $invoice_text file_data
+  regsub -all {{CASHIER}} $file_data $invoice_text file_data
   regsub -all {{POS_USR}} $file_data $pos_usr file_data
   #regsub -all {{POS_PASS}} $file_data $pos_pass file_data
   #Editing existing Printer.Ticket
