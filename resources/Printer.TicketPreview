@@ -26,7 +26,6 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 </line>
 </display>
 <ticket>
-{INVOICE}
 <line></line>
 #if (${ticket.ticketType} == 0)
 <line>
@@ -44,7 +43,6 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 <text align="left" length="15">Fecha:</text>
 <text>${ticket.printDate()}</text>
 </line> 
-{CUSTOMER}
 #if ($place != "")
 <line>
 <text align="left" length="15">Table:</text>
@@ -196,7 +194,6 @@ along with Openbravo POS. If not, see <http://www.gnu.org/licenses/>.
 #end 
 #end 
 <line></line>
-{CASHIER}
 <line></line> 
 <line>
 <text align="center" length="42">Pago en una sola exhibición</text>
