@@ -75,7 +75,6 @@ set invoice_text "
 "
 
 set customer_text "
-</line>
 <line>
 <text align=\"left\" length=\"15\">Cliente:</text>
 <text>{POS_USR}</text>
