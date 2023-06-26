@@ -41,8 +41,7 @@ set invoice_text "
 <line></line>
 <line>
 <text align=\"center\" length=\"42\">Editorial Delti S.A. de C.V.</text>
-</line>
-<line>
+</line> <line>
 <text align=\"center\" length=\"42\">Av Prolongación San Antonio #170 P 1</text>
 </line>
 <line>
@@ -52,7 +51,16 @@ set invoice_text "
 <text align=\"center\" length=\"42\">RFC EDE 890908 640</text>
 </line>
 <line>
+<text align=\"center\" length=\"42\" bold=\"true\">REGIMEN FISCAL: 601 - GENERAL</text>
+</line>
+<line>
+<text align=\"center\" length=\"42\" bold=\"true\">DE LA LEY PERSONAS MORALES</text>
+</line>
+<line>
 <text align=\"center\" length=\"42\">Contactanos www.delti.com.mx</text>
+</line>
+<line>
+<text align=\"center\" length=\"42\" bold=\"true\">Ciudad de México, CDMX </text>
 </line>
 <line>
 <text align=\"center\" length=\"42\">Si deseas factura ingresa tus datos en:</text>
@@ -67,7 +75,7 @@ set invoice_text "
 <text align=\"center\" length=\"42\">cinco días para solicitar tu factura</text> 
 </line>
 <line>
-<text align=\"center\" length=\"42\">NO HAY CAMBIOS NI DEVOLUCIONES</text>
+<text align=\"center\" length=\"42\" bold=\"true\">NO HAY CAMBIOS NI DEVOLUCIONES</text>
 </line>
 <line>
 <text align=\"center\" length=\"42\">Usuario: {POS_USR}</text>
