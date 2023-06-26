@@ -201,7 +201,7 @@ grid .container.b_load_db -column 1 -row 12 -columnspan 2 -sticky wens
 
 #Set ticket printing number options
 set tickets 2
-.container.co_pos_tckt configure -values [list 2 3] 
+.container.co_pos_tckt configure -values [list 2 3 4] 
 .container.co_pos_tckt state readonly
 
 #set padding to all elements
@@ -700,13 +700,19 @@ proc changeTicket {} {
     set cashier_text ""
   }
   writeLog2 "Tickets a imprimir $tickets"
-  if { $tickets == 3 } {
-    writeLog2 "Cambiando tickets a 3"
-    #Reading Printer.Ticket.3 to memory
-    set fp [open "$wd/resources/Printer.Ticket.3" r]
+  if { $tickets == 4 } {
+    writeLog2 "Cambiando tickets a 4"
+    #Reading Printer.Ticket.4 to memory
+    set fp [open "$wd/resources/Printer.Ticket.4" r]
   } else {
-    writeLog2 "2 Tickets solamente"
-    set fp [open "$wd/resources/Printer.Ticket.2" r]
+    if { $tickets == 3 } {
+      writeLog2 "Cambiando tickets a 3"
+      #Reading Printer.Ticket.3 to memory
+      set fp [open "$wd/resources/Printer.Ticket.3" r]
+    } else {
+      writeLog2 "2 Tickets solamente"
+      set fp [open "$wd/resources/Printer.Ticket.2" r]
+    }
   }
   fconfigure $fp -encoding utf-8
   set file_data [read $fp]
